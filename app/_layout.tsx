@@ -11,7 +11,6 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 import "../global.css";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { Button } from "react-native";
 import { Link } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
@@ -43,9 +42,10 @@ export default function RootLayout() {
           name="(tabs)"
           options={{
             headerShown: true,
+            headerTitle: "Knowva",
             headerRight: () => (
               <Link href="/profile">
-                <FontAwesome name="user-circle" size={40} color="white" />
+                <FontAwesome name="user-circle" size={40} color={colorScheme === "dark" ? "white" : "black"} />
               </Link>
             ),
           }}
