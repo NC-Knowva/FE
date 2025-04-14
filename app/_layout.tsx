@@ -37,6 +37,7 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      
       <Stack>
         <Stack.Screen
           name="(tabs)"
@@ -45,7 +46,11 @@ export default function RootLayout() {
             headerTitle: "Knowva",
             headerRight: () => (
               <Link href="/profile">
-                <FontAwesome name="user-circle" size={40} color={colorScheme === "dark" ? "white" : "black"} />
+                <FontAwesome
+                  name="user-circle"
+                  size={40}
+                  color={colorScheme === "dark" ? "white" : "black"}
+                />
               </Link>
             ),
           }}
