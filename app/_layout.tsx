@@ -10,8 +10,12 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import "../global.css";
-
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { Button } from "react-native";
+import { Link } from "expo-router";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+
+// This replaces app.jsx  ==> https://docs.expo.dev/router/basics/core-concepts/
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -35,7 +39,17 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="(tabs)"
+          options={{
+            headerShown: true,
+            headerRight: () => (
+              <Link href="/profile">
+                <FontAwesome name="user-circle" size={40} color="white" />
+              </Link>
+            ),
+          }}
+        />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
