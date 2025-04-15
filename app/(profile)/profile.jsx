@@ -1,104 +1,182 @@
-import { View, Text, Image, Button, StyleSheet, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Pressable,
+  ScrollView,
+} from "react-native";
 import { Link } from "expo-router";
-// import { StyleSheet } from "nativewind";
 
-export default function Profile() {
+import React from "react";
+
+export default function App() {
   return (
-    <>
-      <View className={styles.grid.details}>
-        <Image
-          className={"row-span-2 col-span-2"}
-          style={style.image}
-          defaultSource={require("@/assets/images/profile.jpg")}
-        />
-        <Text className={styles.element.title + " col-span-3"}>User Name</Text>
+    <ScrollView>
+      <View style={styles.info}>
+        <View style={styles.row}>
+          <View style={styles.imageContainer}>
+            <Image
+              style={styles.image}
+              source={require("@/assets/images/profile.jpg")}
+            />
+          </View>
+          <View style={styles.userContainer}>
+            <View style={styles.row}>
+              <View style={styles.username}>
+                <Text style={styles.usernameText}>User Name</Text>
+              </View>
+            </View>
+            <View style={styles.row}>
+              <Link href="../topics" asChild>
+                <Pressable>
+                  <Text style={styles.elementStats}>10 Topics</Text>
+                </Pressable>
+              </Link>
 
-        <Link className={"container"} href="../topics" asChild>
-          <Pressable>
-            <Text className={styles.element.stats}>10 Topics</Text>
-          </Pressable>
-        </Link>
-        <Link
-          className={"container"}
-          href="../messaging?filter=friends"
-          asChild
-        >
-          <Pressable>
-            <Text className={styles.element.stats}>200 Friends</Text>
-          </Pressable>
-        </Link>
-        <Link className={"container"} href="../messaging?filter=groups" asChild>
-          <Pressable>
-            <Text className={styles.element.stats}>2 Study Groups</Text>
-          </Pressable>
-        </Link>
+              <Link href="../messaging?filter=friends" asChild>
+                <Pressable>
+                  <Text style={styles.elementStats}>200 Friends</Text>
+                </Pressable>
+              </Link>
 
-        <Text className={styles.element.username + " col-span-5"}>
-          @username
-        </Text>
-        <View className={" col-span-5"}>
-          <View className={styles.grid.buttons}>
-            <Link
-              className={styles.element.button}
-              href="./edit_profile"
-              asChild
-            >
-              <Pressable>
-                <Text>Edit Profile</Text>
-              </Pressable>
-            </Link>
-            <Link className={styles.element.button} href="./settings" asChild>
-              <Pressable>
-                <Text>Settings</Text>
-              </Pressable>
-            </Link>
+              <Link href="../messaging?filter=groups" asChild>
+                <Pressable>
+                  <Text style={styles.elementStats}>2 Study Groups</Text>
+                </Pressable>
+              </Link>
+            </View>
+          </View>
+        </View>
 
-            <Link className={styles.element.button} href="./logout" asChild>
-              <Pressable>
-                <Text>Log out</Text>
-              </Pressable>
-            </Link>
+        <View style={styles.row}>
+          <Text style={styles.elementUsername}>@username</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Link style={styles.button} href="./edit_profile" asChild>
+            <Pressable>
+              <Text>Edit Profile</Text>
+            </Pressable>
+          </Link>
+
+          <Link style={styles.button} href="./settings" asChild>
+            <Pressable>
+              <Text>Settings</Text>
+            </Pressable>
+          </Link>
+
+          <Link style={styles.button} href="./login" asChild>
+            <Pressable>
+              <Text>Log out</Text>
+            </Pressable>
+          </Link>
+        </View>
+
+        <View style={styles.groupContainer}>
+          <Text style={styles.sectionTitle}>Study Groups:</Text>
+          <View style={styles.sectionGrid}>
+            <Text style={styles.sectionElement}>Subject</Text>
+            <Text style={styles.sectionElement}>Subject</Text>
+            <Text style={styles.sectionElement}>Subject</Text>
+          </View>
+        </View>
+
+        <View style={styles.groupContainer}>
+          <Text style={styles.sectionTitle}>My Cards:</Text>
+          <View style={styles.sectionGrid}>
+            <Text style={styles.sectionElement}>Subject</Text>
+            <Text style={styles.sectionElement}>Subject</Text>
+            <Text style={styles.sectionElement}>Subject</Text>
+            <Text style={styles.sectionElement}>Subject</Text>
           </View>
         </View>
       </View>
-
-      <View>
-        <Text className={styles.section.title}>Study Groups:</Text>
-        <View className={styles.section.grid}>
-          <Text className={styles.section.element}>Subject</Text>
-          <Text className={styles.section.element}>Subject</Text>
-          <Text className={styles.section.element}>Subject</Text>
-        </View>
-      </View>
-
-      <View>
-        <Text className={styles.section.title}>My Cards:</Text>
-        <View className={styles.section.grid}>
-          <Text className={styles.section.element}>Subject</Text>
-          <Text className={styles.section.element}>Subject</Text>
-          <Text className={styles.section.element}>Subject</Text>
-        </View>
-      </View>
-    </>
+    </ScrollView>
   );
 }
 
-const styles = {
-  grid: {
-    details: "grid text-center grid-cols-5 ",
-    buttons: "grid text-center grid-cols-3 gap-2",
+const styles = StyleSheet.create({
+  info: {
+    flex: 1,
+    alignItems: "top",
+    justifyContent: "top",
   },
-  element: {
-    title: " text-lg text-center h-12 p-3",
-    stats: "bg-white m-1 text-center h-auto p-2 border border-solid text-xs",
-    username: "text-left h-auto p-2",
-    button: "bg-white m-1 text-center h-auto p-2 border border-solid text-xs",
+  imageContainer: {
+    flex: 1,
+    flexGrow: 1,
+    alignItems: "top",
+    justifyContent: "top",
   },
-  section: {
-    title: "p-1 font-bold text-lg",
-    grid: " border p-1",
-    element: "bg-white m-1 text-center h-auto p-2 border border-solid text-xs",
+  userContainer: {
+    flex: 1,
+    flexGrow: 2,
+    alignItems: "top",
+    justifyContent: "top",
   },
-};
+  groupContainer: {
+    flex: 1,
+    alignItems: "top",
+    justifyContent: "top",
+  },
+  row: {
+    flexDirection: "row",
+    borderWidth: 2,
 
-const style = StyleSheet.create({ image: { width: "100%", height: "100%" } });
+    height: "auto",
+  },
+  username: {
+    borderColor: "#fff",
+    borderWidth: 1,
+    flexGrow: 3,
+    height: 100,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  usernameText: {
+    alignItems: "left",
+    height: "auto",
+    padding: "20px",
+  },
+  image: {
+    width: "auto",
+    height: 200,
+    objectFit: "contain",
+  },
+  button: {
+    backgroundColor: "white",
+    alignItems: "center",
+    margin: 10,
+    height: "auto",
+    padding: 10,
+    fontSize: 15,
+    borderWidth: 1,
+  },
+  elementStats: {
+    backgroundColor: "white",
+    alignItems: "center",
+    margin: 5,
+    height: 50,
+    padding: 5,
+    fontSize: 11,
+    borderWidth: 1,
+    flexWrap: "wrap",
+  },
+  sectionElement: {
+    backgroundColor: "white",
+    alignItems: "center",
+    margin: 5,
+    height: "auto",
+    padding: 10,
+    fontSize: 15,
+    borderWidth: 1,
+  },
+  sectionTitle: {
+    padding: 10,
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+  sectionGrid: {
+    padding: 5,
+  },
+});
