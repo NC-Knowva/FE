@@ -6,13 +6,14 @@ import {
   Pressable,
   ScrollView,
 } from "react-native";
-import { Link } from "expo-router";
+import { Link, Stack } from "expo-router";
 
 import React from "react";
 
 export default function App() {
   return (
     <ScrollView>
+      <Stack.Screen options={{ title: "Profile" }} />
       <View style={styles.info}>
         <View style={styles.row}>
           <View style={styles.imageContainer}>
@@ -121,8 +122,6 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row",
-    borderWidth: 2,
-
     height: "auto",
   },
   username: {
@@ -151,16 +150,21 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 15,
     borderWidth: 1,
+    borderRadius: 5,
+    borderColor: "grey",
   },
   elementStats: {
     backgroundColor: "white",
-    alignItems: "center",
     margin: 5,
-    height: 50,
     padding: 5,
-    fontSize: 11,
+    fontSize: 15,
     borderWidth: 1,
+    borderRadius: 5,
+    borderColor: "grey",
+    flexShrink: 1,
     flexWrap: "wrap",
+    maxWidth: 80,
+    textAlign: "center",
   },
   sectionElement: {
     backgroundColor: "white",
@@ -170,6 +174,8 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 15,
     borderWidth: 1,
+    borderRadius: 5,
+    borderColor: "grey",
   },
   sectionTitle: {
     padding: 10,
