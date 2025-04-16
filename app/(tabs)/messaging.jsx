@@ -6,6 +6,7 @@ import {
   Pressable,
   StyleSheet,
   ScrollView,
+  SafeAreaView,
 } from "react-native";
 import { Link, Stack } from "expo-router";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -127,38 +128,50 @@ function ChatBox({ user }) {
 export default function Messaging() {
   return (
     <ScrollView>
-      <Stack.Screen options={{ title: "Messaging" }} />
-      <View style={styles.messageBar}>
-        <Text style={styles.barElement}>All</Text>
-        <Text style={styles.barElement}>Friend</Text>
-        <Text style={styles.barElement}>Study Groups</Text>
-        <Link style={styles.button} href="../(messaging)/new_message" asChild>
-          <Pressable>
-            <Entypo
-              style={styles.barElement}
-              name="new-message"
-              size={24}
-              color="black"
-            />
-          </Pressable>
-        </Link>
-      </View>
+      <SafeAreaView>
+        <Stack.Screen options={{ title: "Messaging" }} />
+        <View style={styles.messageBar}>
+          <Text style={styles.barElement}>All</Text>
+          <Text style={styles.barElement}>Friend</Text>
+          <Text style={styles.barElement}>Study Groups</Text>
+          <Link style={styles.button} href="../(messaging)/new_message" asChild>
+            <Pressable>
+              <Entypo
+                style={styles.barElement}
+                name="new-message"
+                size={24}
+                color="black"
+              />
+            </Pressable>
+          </Link>
+        </View>
 
-      <View style={styles.manageMessages}>
-        <Text style={styles.manageMessagesText}>Messages:</Text>
-        <Link href="../(messaging)/friend_request" asChild>
-          <Pressable>
-            <Text style={styles.manageMessagesLink}>Manage Requests</Text>
-          </Pressable>
-        </Link>
-      </View>
+        <View style={styles.manageMessages}>
+          <Text style={styles.manageMessagesText}>Messages:</Text>
+          <Link href="../(messaging)/friend_request" asChild>
+            <Pressable>
+              <Text style={styles.manageMessagesLink}>Manage Requests</Text>
+            </Pressable>
+          </Link>
+        </View>
 
-      <ChatBox user={dummyUser} />
-      <ChatBox user={dummyUser} />
-      <ChatBox user={dummyUser} />
-      <ChatBox user={dummyUser} />
-      <ChatBox user={dummyUser} />
-      <ChatBox user={dummyUser} />
+        <View style={styles.friendMessages}>
+          <ChatBox user={dummyUser} />
+          <ChatBox user={dummyUser} />
+          <ChatBox user={dummyUser} />
+          <ChatBox user={dummyUser} />
+          <ChatBox user={dummyUser} />
+          <ChatBox user={dummyUser} />
+          <ChatBox user={dummyUser} />
+          <ChatBox user={dummyUser} />
+          <ChatBox user={dummyUser} />
+          <ChatBox user={dummyUser} />
+          <ChatBox user={dummyUser} />
+          <ChatBox user={dummyUser} />
+          <ChatBox user={dummyUser} />
+          <ChatBox user={dummyUser} />
+        </View>
+      </SafeAreaView>
     </ScrollView>
   );
 }
@@ -233,8 +246,7 @@ const styles = StyleSheet.create({
   friendMessage: {
     paddingTop: 7,
   },
-  time: {
-    fontSize: 10,
-    // backgroundColor: "grey",
+  friendMessages: {
+    paddingBottom: 50,
   },
 });

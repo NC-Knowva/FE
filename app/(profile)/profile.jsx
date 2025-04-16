@@ -7,25 +7,24 @@ import {
   ScrollView,
 } from "react-native";
 import { Link, Stack } from "expo-router";
+import { UserContext } from "../../context/User";
 
-import React from "react";
+import { React, useContext } from "react";
 
 export default function App() {
+  const { user, setUser } = useContext(UserContext);
   return (
     <ScrollView>
       <Stack.Screen options={{ title: "Profile" }} />
       <View style={styles.info}>
         <View style={styles.row}>
           <View style={styles.imageContainer}>
-            <Image
-              style={styles.image}
-              source={require("@/assets/images/profile.jpg")}
-            />
+            <Image style={styles.image} source={{ uri: user.avatar_img_url }} />
           </View>
           <View style={styles.userContainer}>
             <View style={styles.row}>
               <View style={styles.username}>
-                <Text style={styles.usernameText}>User Name</Text>
+                <Text style={styles.usernameText}>{user.name}</Text>
               </View>
             </View>
             <View style={styles.row}>
@@ -51,7 +50,7 @@ export default function App() {
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.elementUsername}>@username</Text>
+          <Text style={styles.elementUsername}>@{user.username}</Text>
         </View>
 
         <View style={styles.buttonRow}>
@@ -67,8 +66,12 @@ export default function App() {
             </Pressable>
           </Link>
 
-          <Link style={styles.button} href="./login" asChild>
-            <Pressable>
+          <Link style={styles.button} href="../loginUser" asChild>
+            <Pressable
+              onPress={() => {
+                setUser(null);
+              }}
+            >
               <Text>Log out</Text>
             </Pressable>
           </Link>

@@ -7,12 +7,13 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "react-native-reanimated";
 import "../global.css";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Link } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { UserProvider } from "@/context/User";
 
 // This replaces app.jsx  ==> https://docs.expo.dev/router/basics/core-concepts/
 
@@ -36,28 +37,29 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      
-      <Stack>
-        <Stack.Screen
-          name="(tabs)"
-          options={{
-            headerShown: true,
-            headerTitle: "Knowva",
-            headerRight: () => (
-              <Link href="/profile">
-                <FontAwesome
-                  name="user-circle"
-                  size={40}
-                  color={colorScheme === "dark" ? "white" : "black"}
-                />
-              </Link>
-            ),
-          }}
-        />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <UserProvider>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen
+            name="(tabs)"
+            options={{
+              headerShown: true,
+              headerTitle: "Knowva",
+              headerRight: () => (
+                <Link href="/profile">
+                  <FontAwesome
+                    name="user-circle"
+                    size={40}
+                    color={colorScheme === "dark" ? "white" : "black"}
+                  />
+                </Link>
+              ),
+            }}
+          />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </UserProvider>
   );
 }

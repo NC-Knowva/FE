@@ -7,16 +7,13 @@ import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
-import AntDesign from '@expo/vector-icons/AntDesign'
-import Ionicons from '@expo/vector-icons/Ionicons'
-
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    
-
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
@@ -59,7 +56,7 @@ export default function TabLayout() {
           ),
         }}
       />
-       <Tabs.Screen
+      <Tabs.Screen
         name="calendar"
         options={{
           title: "Calendar",
@@ -77,9 +74,12 @@ export default function TabLayout() {
           ),
         }}
       />
-
+      <Tabs.Screen
+        name="login"
+        options={{
+          href: null,
+        }}
+      />
     </Tabs>
-
-    
   );
 }
