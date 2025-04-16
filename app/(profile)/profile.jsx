@@ -54,7 +54,7 @@ export default function App() {
           <Text style={styles.elementUsername}>@username</Text>
         </View>
 
-        <View style={styles.row}>
+        <View style={styles.buttonRow}>
           <Link style={styles.button} href="./edit_profile" asChild>
             <Pressable>
               <Text>Edit Profile</Text>
@@ -123,6 +123,11 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     height: "auto",
+  },
+  buttonRow: {
+    flexDirection: "row",
+    height: "auto",
+    justifyContent: "center",
   },
   username: {
     borderColor: "#fff",
