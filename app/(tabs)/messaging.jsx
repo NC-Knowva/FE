@@ -9,11 +9,6 @@ import {
 } from "react-native";
 import { Link, Stack } from "expo-router";
 import Entypo from "@expo/vector-icons/Entypo";
-import TimeAgo from "javascript-time-ago";
-
-import en from "javascript-time-ago/locale/en";
-import ReactTimeAgo from "react-time-ago";
-TimeAgo.addDefaultLocale(en);
 
 const dummyUser = {
   username: "iheartsocio",
@@ -21,31 +16,110 @@ const dummyUser = {
   avatar_img_url:
     "https://i.pinimg.com/236x/a9/24/01/a924011ac7bbcf9159a7544abb1def06.jpg",
   message: "bvcxb xcbxkjbxcvj ibpxvc gfsdddddd ddddddddd",
-  timestamp: "April 15, 2025 16:08:30 GMT+01:00",
+  timestamp: "2023-10-04T00:00:00.000Z",
 };
 
-function chatBox() {
-  const messageTime = new Date(dummyUser.timestamp);
-  return (
-    <Link href={`../(messaging)/[${dummyUser.username}]_chat`} asChild>
-      <View style={styles.chatCard}>
-        <Image
-          style={styles.chatCardImage}
-          source={{ uri: dummyUser.avatar_img_url }}
-        />
-        <View style={styles.messageInfo}>
-          <Text style={styles.friendName}>{dummyUser.name}</Text>
-          <Text style={styles.friendUsername}>@{dummyUser.username}</Text>
-          <Text numberOfLines={1} style={styles.friendMessage}>
-            {dummyUser.message}
-          </Text>
-        </View>
-        <ReactTimeAgo
-          style={styles.messageTime}
-          date={messageTime}
-          locale="en-UK"
-        />
+function TimeAgo({ timestamp }) {
+  const messageTime = Date.parse(timestamp);
+  const currentTime = Date.now();
+
+  const timeDifference = currentTime - messageTime;
+  const seconds = timeDifference / 1000;
+
+  if (seconds < 20) {
+    return (
+      <View style={styles.manageMessages}>
+        <Text>Just Now</Text>
       </View>
+    );
+  } else if (seconds < 60) {
+    return (
+      <View style={styles.manageMessages}>
+        <Text>Less than a minute ago</Text>
+      </View>
+    );
+  } else if (seconds < 3600) {
+    const minutes = Math.floor(seconds / 60);
+    if (minutes === 1) {
+      return (
+        <View style={styles.manageMessages}>
+          <Text>1 minute ago</Text>
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.manageMessages}>
+          <Text>{minutes} minutes ago</Text>
+        </View>
+      );
+    }
+  } else if (seconds < 86400) {
+    const hours = Math.floor(seconds / 3600);
+    if (hours === 1) {
+      return (
+        <View style={styles.manageMessages}>
+          <Text>1 hour ago</Text>
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.manageMessages}>
+          <Text>{hours} hours ago</Text>
+        </View>
+      );
+    }
+  } else if (seconds < 604800) {
+    const days = Math.floor(seconds / 86400);
+    if (days === 1) {
+      return (
+        <View style={styles.manageMessages}>
+          <Text>1 day ago</Text>
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.manageMessages}>
+          <Text>{days} days ago</Text>
+        </View>
+      );
+    }
+  } else {
+    const weeks = Math.floor(seconds / 604800);
+    if (weeks === 1) {
+      return (
+        <View style={styles.manageMessages}>
+          <Text>1 week ago</Text>
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.manageMessages}>
+          <Text>{weeks} weeks ago</Text>
+        </View>
+      );
+    }
+  }
+}
+
+function ChatBox({ user }) {
+  return (
+    <Link href={`../(messaging)/${user.username}`} asChild>
+      <Pressable>
+        <View style={styles.chatCard}>
+          <Image
+            style={styles.chatCardImage}
+            source={{ uri: user.avatar_img_url }}
+          />
+          <View style={styles.messageInfo}>
+            <Text style={styles.friendName}>{user.name}</Text>
+            <Text style={styles.friendUsername}>@{user.username}</Text>
+            <Text numberOfLines={1} style={styles.friendMessage}>
+              {user.message}
+            </Text>
+          </View>
+          <TimeAgo timestamp={user.timestamp} />
+        </View>
+      </Pressable>
     </Link>
   );
 }
@@ -79,11 +153,12 @@ export default function Messaging() {
         </Link>
       </View>
 
-      {chatBox()}
-      {chatBox()}
-      {chatBox()}
-      {chatBox()}
-      {chatBox()}
+      <ChatBox user={dummyUser} />
+      <ChatBox user={dummyUser} />
+      <ChatBox user={dummyUser} />
+      <ChatBox user={dummyUser} />
+      <ChatBox user={dummyUser} />
+      <ChatBox user={dummyUser} />
     </ScrollView>
   );
 }
