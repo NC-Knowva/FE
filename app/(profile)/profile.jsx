@@ -6,98 +6,105 @@ import {
   Pressable,
   ScrollView,
 } from "react-native";
-import { Link, Stack } from "expo-router";
+import { Link, Stack, Redirect } from "expo-router";
 import { UserContext } from "../../context/User";
 
 import { React, useContext } from "react";
 
 export default function App() {
   const { user, setUser } = useContext(UserContext);
-  return (
-    <ScrollView>
-      <Stack.Screen options={{ title: "Profile" }} />
-      <View style={styles.info}>
-        <View style={styles.row}>
-          <View style={styles.imageContainer}>
-            <Image style={styles.image} source={{ uri: user.avatar_img_url }} />
-          </View>
-          <View style={styles.userContainer}>
-            <View style={styles.row}>
-              <View style={styles.username}>
-                <Text style={styles.usernameText}>{user.name}</Text>
+  if (user) {
+    return (
+      <ScrollView>
+        <Stack.Screen options={{ title: "Profile" }} />
+        <View style={styles.info}>
+          <View style={styles.row}>
+            <View style={styles.imageContainer}>
+              <Image
+                style={styles.image}
+                source={{ uri: user.avatar_img_url }}
+              />
+            </View>
+            <View style={styles.userContainer}>
+              <View style={styles.row}>
+                <View style={styles.username}>
+                  <Text style={styles.usernameText}>{user.name}</Text>
+                </View>
+              </View>
+              <View style={styles.row}>
+                <Link href="../topics" asChild>
+                  <Pressable>
+                    <Text style={styles.elementStats}>10 Topics</Text>
+                  </Pressable>
+                </Link>
+
+                <Link href="../messaging?filter=friends" asChild>
+                  <Pressable>
+                    <Text style={styles.elementStats}>200 Friends</Text>
+                  </Pressable>
+                </Link>
+
+                <Link href="../messaging?filter=groups" asChild>
+                  <Pressable>
+                    <Text style={styles.elementStats}>2 Study Groups</Text>
+                  </Pressable>
+                </Link>
               </View>
             </View>
-            <View style={styles.row}>
-              <Link href="../topics" asChild>
-                <Pressable>
-                  <Text style={styles.elementStats}>10 Topics</Text>
-                </Pressable>
-              </Link>
+          </View>
 
-              <Link href="../messaging?filter=friends" asChild>
-                <Pressable>
-                  <Text style={styles.elementStats}>200 Friends</Text>
-                </Pressable>
-              </Link>
+          <View style={styles.row}>
+            <Text style={styles.elementUsername}>@{user.username}</Text>
+          </View>
 
-              <Link href="../messaging?filter=groups" asChild>
-                <Pressable>
-                  <Text style={styles.elementStats}>2 Study Groups</Text>
-                </Pressable>
-              </Link>
+          <View style={styles.buttonRow}>
+            <Link style={styles.button} href="./edit_profile" asChild>
+              <Pressable>
+                <Text>Edit Profile</Text>
+              </Pressable>
+            </Link>
+
+            <Link style={styles.button} href="./settings" asChild>
+              <Pressable>
+                <Text>Settings</Text>
+              </Pressable>
+            </Link>
+
+            <Link style={styles.button} href="../loginUser" asChild>
+              <Pressable
+                onPress={() => {
+                  setUser(null);
+                }}
+              >
+                <Text>Log out</Text>
+              </Pressable>
+            </Link>
+          </View>
+
+          <View style={styles.groupContainer}>
+            <Text style={styles.sectionTitle}>Study Groups:</Text>
+            <View style={styles.sectionGrid}>
+              <Text style={styles.sectionElement}>Subject</Text>
+              <Text style={styles.sectionElement}>Subject</Text>
+              <Text style={styles.sectionElement}>Subject</Text>
+            </View>
+          </View>
+
+          <View style={styles.groupContainer}>
+            <Text style={styles.sectionTitle}>My Cards:</Text>
+            <View style={styles.sectionGrid}>
+              <Text style={styles.sectionElement}>Subject</Text>
+              <Text style={styles.sectionElement}>Subject</Text>
+              <Text style={styles.sectionElement}>Subject</Text>
+              <Text style={styles.sectionElement}>Subject</Text>
             </View>
           </View>
         </View>
-
-        <View style={styles.row}>
-          <Text style={styles.elementUsername}>@{user.username}</Text>
-        </View>
-
-        <View style={styles.buttonRow}>
-          <Link style={styles.button} href="./edit_profile" asChild>
-            <Pressable>
-              <Text>Edit Profile</Text>
-            </Pressable>
-          </Link>
-
-          <Link style={styles.button} href="./settings" asChild>
-            <Pressable>
-              <Text>Settings</Text>
-            </Pressable>
-          </Link>
-
-          <Link style={styles.button} href="../loginUser" asChild>
-            <Pressable
-              onPress={() => {
-                setUser(null);
-              }}
-            >
-              <Text>Log out</Text>
-            </Pressable>
-          </Link>
-        </View>
-
-        <View style={styles.groupContainer}>
-          <Text style={styles.sectionTitle}>Study Groups:</Text>
-          <View style={styles.sectionGrid}>
-            <Text style={styles.sectionElement}>Subject</Text>
-            <Text style={styles.sectionElement}>Subject</Text>
-            <Text style={styles.sectionElement}>Subject</Text>
-          </View>
-        </View>
-
-        <View style={styles.groupContainer}>
-          <Text style={styles.sectionTitle}>My Cards:</Text>
-          <View style={styles.sectionGrid}>
-            <Text style={styles.sectionElement}>Subject</Text>
-            <Text style={styles.sectionElement}>Subject</Text>
-            <Text style={styles.sectionElement}>Subject</Text>
-            <Text style={styles.sectionElement}>Subject</Text>
-          </View>
-        </View>
-      </View>
-    </ScrollView>
-  );
+      </ScrollView>
+    );
+  } else {
+    return <Redirect href="../loginUser" />;
+  }
 }
 
 const styles = StyleSheet.create({
