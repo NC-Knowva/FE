@@ -51,6 +51,7 @@ export default function RootLayout() {
                     name="user-circle"
                     size={40}
                     color={colorScheme === "dark" ? "white" : "black"}
+                    style={{ paddingRight: 10 }}
                   />
                 </Link>
               ),
