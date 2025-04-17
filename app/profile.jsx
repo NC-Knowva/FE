@@ -7,7 +7,7 @@ import {
   ScrollView,
 } from "react-native";
 import { Link, Stack, Redirect } from "expo-router";
-import { UserContext } from "../../context/User";
+import { UserContext } from "../context/User";
 
 import { React, useContext } from "react";
 
@@ -58,13 +58,13 @@ export default function App() {
           </View>
 
           <View style={styles.buttonRow}>
-            <Link style={styles.button} href="./edit_profile" asChild>
+            <Link style={styles.button} href="./profile/edit_profile" asChild>
               <Pressable>
                 <Text>Edit Profile</Text>
               </Pressable>
             </Link>
 
-            <Link style={styles.button} href="./settings" asChild>
+            <Link style={styles.button} href="./profile/settings" asChild>
               <Pressable>
                 <Text>Settings</Text>
               </Pressable>

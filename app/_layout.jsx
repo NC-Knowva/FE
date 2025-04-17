@@ -46,7 +46,7 @@ export default function RootLayout() {
               headerShown: true,
               headerTitle: "Knowva",
               headerRight: () => (
-                <Link href="/profile">
+                <Link href="./profile">
                   <FontAwesome
                     name="user-circle"
                     size={40}
