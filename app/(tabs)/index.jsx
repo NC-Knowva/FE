@@ -12,18 +12,88 @@ import { createContext, useContext, useState } from "react";
 import { Redirect, Link } from "expo-router";
 import { UserContext } from "../../context/User";
 
-const dummyUser = {
-  username: "iheartsocio",
-  name: "sara",
+const dummyFriendUser = {
+  username: "your_fav_ai",
+  name: "Conner",
   avatar_img_url:
-    "https://i.pinimg.com/236x/a9/24/01/a924011ac7bbcf9159a7544abb1def06.jpg",
-  message: "bvcxb xcbxkjbxcvj ibpxvc gfsdddddd ddddddddd",
-  timestamp: "2024-10-04T00:00:00.000Z",
+    "https://www.gamebyte.com/wp-content/uploads/2019/07/Detroit_Become_Human_Connor_3.jpg",
+  education: "A-level",
+  settings: {},
+  calendar: {},
+  created_at: "2023-10-01T00:00:00.000Z",
 };
 
-function TimeAgo({ timestamp }) {
+const dummyFriendMessages = 
+  [{
+    sender_username:"your_fav_ai",
+    receiver_username:"iheartsocio",
+    body:"shall we revise later tonight?",
+    created_at:"2023-10-04T00:00:00.000Z"
+    
+},
+{
+  sender_username:"your_fav_ai",
+  receiver_username:"iheartsocio",
+  body:"shall we revise later tonight?",
+  created_at:"2023-10-04T00:00:00.000Z"
+  
+},
+]
+
+const dummyScores = {
+  username: "iheartsocio",
+  game_type: "quiz",
+  game_name: "Brain Sum Blitz",
+  topic: "Normal Distribution and Missing Parameters",
+  subject: "Maths",
+  score: { correct: 9, incorrect: 1, time: 95 },
+};
+
+const dummyFriendScores = {
+  username: "your_fav_ai",
+  game_type: "quiz",
+  game_name: "Brain Sum Blitz",
+  topic: "Normal Distribution and Missing Parameters",
+  subject: "Maths",
+  score: { correct: 8, incorrect: 2, time: 125 },
+  created_at: "2025-04-04T00:00:00.000Z",
+};
+
+const friendActivities = [
+  {type: "game",
+  created_at: dummyFriendScores.created_at,
+  user: dummyFriendUser,
+  scores: dummyFriendScores
+  },
+  ...dummyFriendMessages.map((msg) => ({
+    type: "message",
+    created_at: msg.created_at,
+    user: msg.sender_username,
+    message: msg.body,
+  }))
+]
+
+function GameScores({ scoreboard }) {
+  const { score, game_name, topic, subject } = scoreboard;
+  const scorePercentage =
+    (score.correct / (score.correct + score.incorrect)) * 100;
+  return (
+    <View style={styles.row}>
+      <View style={styles.scoreContainer}>
+        <Text style={styles.scoreText}>{scorePercentage}%</Text>
+      </View>
+      <View style={styles.activityInfoContainer}>
+        <Text style={styles.friendName}>{game_name}</Text>
+        <Text>{subject}</Text>
+        <Text style={styles.friendUsername}>{topic}</Text>
+      </View>
+    </View>
+  );
+}
+
+function TimeAgo({ created_at }) {
   const now = new Date();
-  const past = new Date(timestamp);
+  const past = new Date(created_at);
   const diffInSeconds = Math.floor((now - past) / 1000);
 
   const units = [
@@ -51,21 +121,49 @@ function TimeAgo({ timestamp }) {
 }
 
 function FriendActivity({ user }) {
+  const { avatar_img_url, name, created_at, username } = user;
   return (
     <View style={styles.row}>
       <View style={styles.friendImageContainer}>
         <Image
           style={styles.friendAvatarImage}
-          source={{ uri: user.avatar_img_url }}
+          source={{ uri: avatar_img_url }}
         />
       </View>
       <View style={styles.activityInfoContainer}>
-        <TimeAgo timestamp={user.timestamp} />
+        <TimeAgo created_at={created_at} />
         <Text>
-          <Text style={styles.friendName}>{user.name} </Text>
+          <Text style={styles.friendName}>{name} </Text>
           <Text>sent a message</Text>
         </Text>
-        <Text style={styles.friendUsername}>@{user.username}</Text>
+        <Text style={styles.friendUsername}>@{username}</Text>
+      </View>
+    </View>
+  );
+}
+
+function FriendGameActivity({ scoreboard, user }) {
+  const { score, game_name, topic, subject, username, created_at } = scoreboard;
+  const { avatar_img_url, name } = user;
+  const scorePercentage =
+    (score.correct / (score.correct + score.incorrect)) * 100;
+  return (
+    <View style={styles.row}>
+      <View style={styles.friendImageContainer}>
+        <Image
+          style={styles.friendAvatarImage}
+          source={{ uri: avatar_img_url }}
+        />
+      </View>
+      <View style={styles.activityInfoContainer}>
+        <TimeAgo created_at={created_at} />
+        <Text>
+          <Text style={styles.friendName}>{name} </Text>
+          <Text>
+            scored {scorePercentage}% in {game_name}
+          </Text>
+        </Text>
+        <Text style={styles.friendUsername}>@{username}</Text>
       </View>
     </View>
   );
@@ -100,31 +198,18 @@ export default function HomeScreen() {
               </View>
             </View>
           </View>
-
           <View style={styles.container}>
-            <Text style={styles.title}>Continue Activity</Text>
-            <View style={styles.activityRow}>
-              <Link style={styles.subjectButton} href="/revision" asChild>
-                <Pressable>
-                  <Text>Maths</Text>
-                </Pressable>
-              </Link>
-              <Link style={styles.subjectButton} href="/revision" asChild>
-                <Pressable>
-                  <Text>English</Text>
-                </Pressable>
-              </Link>
-              <Link style={styles.subjectButton} href="/revision" asChild>
-                <Pressable>
-                  <Text>Economics</Text>
-                </Pressable>
-              </Link>
-            </View>
-            <Link style={styles.button} href="/revision" asChild>
+            <Link href="/revision" asChild>
               <Pressable>
-                <Text>See More...</Text>
+                <Text style={styles.title}>Play again</Text>
+                <GameScores scoreboard={dummyScores} />
               </Pressable>
             </Link>
+            <Link style={styles.button} href="/revision" asChild>
+            <Pressable>
+              <Text>Play a new game</Text>
+            </Pressable>
+          </Link>
           </View>
 
           <View style={styles.exams}>
@@ -181,15 +266,21 @@ export default function HomeScreen() {
           <View style={styles.friendActivityContainer}>
             <Text style={styles.title}>Friend Activity</Text>
             <View style={styles.friendContainer}>
-              <FriendActivity user={dummyUser} />
+              <FriendGameActivity
+                scoreboard={dummyFriendScores}
+                user={dummyFriendUser}
+              />
             </View>
             <View style={styles.friendContainer}>
-              <FriendActivity user={dummyUser} />
+              <FriendActivity user={dummyFriendUser} />
             </View>
             <View style={styles.friendContainer}>
-              <FriendActivity user={dummyUser} />
+              <FriendActivity user={dummyFriendUser} />
             </View>
           </View>
+        
+
+          
         </SafeAreaView>
       </ScrollView>
     );
@@ -223,6 +314,17 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     width: "100%",
   },
+  scoreContainer: {
+    width: 80,
+    height: 80,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
+    borderRadius: 40,
+    borderColor: "lightblue",
+    borderWidth: 4,
+    marginLeft: 20,
+  },
   friendContainer: {
     alignSelf: "center",
     justifyContent: "center",
@@ -236,7 +338,7 @@ const styles = StyleSheet.create({
   friendActivityContainer: {
     backgroundColor: "lightgrey",
     paddingTop: 10,
-    paddingBottom: 60
+    paddingBottom: 60,
   },
   row: {
     flexDirection: "row",
@@ -260,6 +362,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     paddingBottom: 10,
     textAlign: "center",
+  },
+  scoreText: {
+    fontSize: 20,
+    fontWeight: "bold",
   },
   exams: {
     alignItems: "center",
@@ -331,7 +437,7 @@ const styles = StyleSheet.create({
     maxWidth: 600,
   },
   date: {
-    color: "grey",
+    color: "dimgrey",
     fontSize: 12,
     textAlign: "center",
     padding: 10,
@@ -352,6 +458,6 @@ const styles = StyleSheet.create({
   },
   friendUsername: {
     fontSize: 13,
-    color: "grey",
+    color: "dimgrey",
   },
 });
