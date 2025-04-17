@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Link, Stack } from "expo-router";
 import Entypo from "@expo/vector-icons/Entypo";
+import TimeAgo from "@/components/TimeAgo";
 
 const dummyUser = {
   username: "iheartsocio",
@@ -17,90 +18,8 @@ const dummyUser = {
   avatar_img_url:
     "https://i.pinimg.com/236x/a9/24/01/a924011ac7bbcf9159a7544abb1def06.jpg",
   message: "bvcxb xcbxkjbxcvj ibpxvc gfsdddddd ddddddddd",
-  timestamp: "2023-10-04T00:00:00.000Z",
+  created_at: "2023-10-04T00:00:00.000Z",
 };
-
-function TimeAgo({ timestamp }) {
-  const messageTime = Date.parse(timestamp);
-  const currentTime = Date.now();
-
-  const timeDifference = currentTime - messageTime;
-  const seconds = timeDifference / 1000;
-
-  if (seconds < 20) {
-    return (
-      <View style={styles.manageMessages}>
-        <Text>Just Now</Text>
-      </View>
-    );
-  } else if (seconds < 60) {
-    return (
-      <View style={styles.manageMessages}>
-        <Text>Less than a minute ago</Text>
-      </View>
-    );
-  } else if (seconds < 3600) {
-    const minutes = Math.floor(seconds / 60);
-    if (minutes === 1) {
-      return (
-        <View style={styles.manageMessages}>
-          <Text>1 minute ago</Text>
-        </View>
-      );
-    } else {
-      return (
-        <View style={styles.manageMessages}>
-          <Text>{minutes} minutes ago</Text>
-        </View>
-      );
-    }
-  } else if (seconds < 86400) {
-    const hours = Math.floor(seconds / 3600);
-    if (hours === 1) {
-      return (
-        <View style={styles.manageMessages}>
-          <Text>1 hour ago</Text>
-        </View>
-      );
-    } else {
-      return (
-        <View style={styles.manageMessages}>
-          <Text>{hours} hours ago</Text>
-        </View>
-      );
-    }
-  } else if (seconds < 604800) {
-    const days = Math.floor(seconds / 86400);
-    if (days === 1) {
-      return (
-        <View style={styles.manageMessages}>
-          <Text>1 day ago</Text>
-        </View>
-      );
-    } else {
-      return (
-        <View style={styles.manageMessages}>
-          <Text>{days} days ago</Text>
-        </View>
-      );
-    }
-  } else {
-    const weeks = Math.floor(seconds / 604800);
-    if (weeks === 1) {
-      return (
-        <View style={styles.manageMessages}>
-          <Text>1 week ago</Text>
-        </View>
-      );
-    } else {
-      return (
-        <View style={styles.manageMessages}>
-          <Text>{weeks} weeks ago</Text>
-        </View>
-      );
-    }
-  }
-}
 
 function ChatBox({ user }) {
   return (
@@ -118,7 +37,7 @@ function ChatBox({ user }) {
               {user.message}
             </Text>
           </View>
-          <TimeAgo timestamp={user.timestamp} />
+          <TimeAgo created_at={user.created_at} />
         </View>
       </Pressable>
     </Link>
