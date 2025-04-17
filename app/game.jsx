@@ -17,8 +17,7 @@ const shuffleImages = (array) => {
       // Pick a remaining element...
       let randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex--;
-      //console.log(randomIndex)
-  
+
       // And swap it with the current element.
       [array[currentIndex], array[randomIndex]] = [
         array[randomIndex], array[currentIndex]];
@@ -28,10 +27,8 @@ const shuffleImages = (array) => {
 //Generates some random indices to to select images
 const getRandomIndices = (data, indNum) => {
     let randomIndices = []
-
     for (let i = 0; i < indNum; i++) {
         const randNum = Math.floor(Math.random() * data.length)
-
         if (randomIndices.includes(randNum))
             i--
         else
@@ -44,7 +41,6 @@ const getImagesToDisplay = (data, indices) => {
     return (indices.map((index) => data[index]))
 }
 
-
 const HomeScreen = () => {
     const colorScheme = Appearance.getColorScheme()
     const theme = colorScheme === 'dark' ? Colors.dark : Colors.light
@@ -52,13 +48,9 @@ const HomeScreen = () => {
     const Container = Platform.OS === 'web' ? ScrollView : SafeAreaView
     const router = useRouter()
 
-    //const [displayedImg, setDisplayedImg] = useState(0) //initial state
-
     const randIndices = getRandomIndices (numbersImages, 8)
     const selectedImages = getImagesToDisplay (numbersImages, randIndices)
     const imagesData = shuffleImages([...selectedImages, ...selectedImages])
-    //console.log(imagesData)
-    //console.log(numbersImages[0].uri, reactLogo)
      
     return (
         <Container >
@@ -68,97 +60,6 @@ const HomeScreen = () => {
                 <ImageList imagesData={imagesData} imgStyle= {styles.image}/>
         </Container>
     );
-
-//   return (
-//       <View style={styles.container}>
-//         <ImageBackground 
-//         source={backgroungImg}
-//         resizeMode="cover"
-//         style={styles.backImg}
-//         >
-//             <ScrollView contentContainerStyle={{
-//                 flexDirection: "row",
-//                 flexWrap: "wrap",
-//                 justifyContent: "center",
-//                 }}
-//                 horizontal={false}>
-//                 <Pressable onPress={() =>{console.log('pressed .....')}}>
-//                     <Image source={numbersImages[0]} style={styles.image}></Image>
-//                 </Pressable>
-
-//                 <Pressable onPress={() =>{console.log('pressed .....')}}>
-//                     <Image source={numbersImages[4]} style={styles.image}></Image>
-//                 </Pressable>
-
-//                 <Pressable onPress={() =>{console.log('pressed .....')}}>
-//                     <Image source={numbersImages[1]} style={styles.image}></Image>
-//                 </Pressable>
-
-//                 <Pressable onPress={() =>{console.log('pressed .....')}}>
-//                     <Image source={numbersImages[6]} style={styles.image}></Image>
-//                 </Pressable>
-
-//                 <Pressable onPress={() =>{console.log('pressed .....')}}>
-//                     <Image source={numbersImages[2]} style={styles.image}></Image>
-//                 </Pressable>
-
-//                 <Pressable onPress={() =>{console.log('pressed .....')}}>
-//                     <Image source={numbersImages[3]} style={styles.image}></Image>
-//                 </Pressable>
-
-//                 <Pressable onPress={() =>{console.log('pressed .....')}}>
-//                     <Image source={numbersImages[5]} style={styles.image}></Image>
-//                 </Pressable>
-
-//                 <Pressable onPress={() =>{console.log('pressed .....')}}>
-//                     <Image source={numbersImages[8]} style={styles.image}></Image>
-//                 </Pressable>
-
-//                 <Pressable onPress={() =>{console.log('pressed .....')}}>
-//                     <Image source={numbersImages[0]} style={styles.image}></Image>
-//                 </Pressable>
-
-//                 <Pressable onPress={() =>{console.log('pressed .....')}}>
-//                     <Image source={numbersImages[4]} style={styles.image}></Image>
-//                 </Pressable>
-
-//                 <Pressable onPress={() =>{console.log('pressed .....')}}>
-//                     <Image source={numbersImages[1]} style={styles.image}></Image>
-//                 </Pressable>
-
-//                 <Pressable onPress={() =>{console.log('pressed .....')}}>
-//                     <Image source={numbersImages[5]} style={styles.image}></Image>
-//                 </Pressable>
-
-//                 <Pressable onPress={() =>{console.log('pressed .....')}}>
-//                     <Image source={numbersImages[6]} style={styles.image}></Image>
-//                 </Pressable>
-
-//                 <Pressable onPress={() =>{console.log('pressed .....')}}>
-//                     <Image source={numbersImages[7]} style={styles.image}></Image>
-//                 </Pressable>
-
-//                 <Pressable onPress={() =>{console.log('pressed .....')}}>
-//                     <Image source={numbersImages[2]} style={styles.image}></Image>
-//                 </Pressable>
-
-//                 <Pressable onPress={() =>{console.log('pressed .....')}}>
-//                     <Image source={numbersImages[8]} style={styles.image}></Image>
-//                 </Pressable>
-
-//                 <Pressable onPress={() =>{console.log('pressed .....')}}>
-//                     <Image source={numbersImages[3]} style={styles.image}></Image>
-//                 </Pressable>
-
-//                 <Pressable onPress={() =>{console.log('pressed .....')}}>
-//                     <Image source={numbersImages[7]} style={styles.image}></Image>
-//                 </Pressable>
-
-//           </ScrollView>
-                 
-//         </ImageBackground>
-//     </View>
-//   );
 }
 
 const styles =  
