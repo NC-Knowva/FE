@@ -68,8 +68,7 @@ const friendActivities = [
   ...dummyFriendMessages.map((msg) => ({
     type: "message",
     created_at: msg.created_at,
-    user: msg.sender_username,
-    message: msg.body,
+    user: dummyFriendUser,
   }))
 ]
 
@@ -120,8 +119,8 @@ function TimeAgo({ created_at }) {
   return <Text>Just now</Text>;
 }
 
-function FriendActivity({ user }) {
-  const { avatar_img_url, name, created_at, username } = user;
+function FriendActivity({ user, created_at }) {
+  const { avatar_img_url, name, username } = user;
   return (
     <View style={styles.row}>
       <View style={styles.friendImageContainer}>
@@ -143,7 +142,7 @@ function FriendActivity({ user }) {
 }
 
 function FriendGameActivity({ scoreboard, user }) {
-  const { score, game_name, topic, subject, username, created_at } = scoreboard;
+  const { score, game_name, username, created_at } = scoreboard;
   const { avatar_img_url, name } = user;
   const scorePercentage =
     (score.correct / (score.correct + score.incorrect)) * 100;
@@ -262,23 +261,22 @@ export default function HomeScreen() {
               </Pressable>
             </Link>
           </View>
-
+          
           <View style={styles.friendActivityContainer}>
             <Text style={styles.title}>Friend Activity</Text>
-            <View style={styles.friendContainer}>
-              <FriendGameActivity
-                scoreboard={dummyFriendScores}
-                user={dummyFriendUser}
-              />
-            </View>
-            <View style={styles.friendContainer}>
-              <FriendActivity user={dummyFriendUser} />
-            </View>
-            <View style={styles.friendContainer}>
-              <FriendActivity user={dummyFriendUser} />
-            </View>
+            {[...friendActivities].sort((a,b) => new Date(b.created_at) - new Date(a.created_at))
+            .map((activity, index) => (
+              <View key={index} style={styles.friendContainer}>
+                {activity.type === "game" ? (
+                  <FriendGameActivity scoreboard={activity.scores} user={activity.user}/>
+                ) : activity.type === "message" ? (
+                  <FriendActivity user={activity.user} created_at={activity.created_at}/>
+                ) : null
+              }
+              </View>
+            ))
+            }
           </View>
-        
 
           
         </SafeAreaView>
