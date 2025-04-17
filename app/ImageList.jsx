@@ -8,8 +8,6 @@ function timeout(delay) {
 }
 const ImageList = ({imagesData, imgStyle}) => {
 
-    console.log('top .... ', imagesData)
-
     const [selectedImg, setSelectedImg] = useState([])
     const [matchedImg, setMatchedImg] = useState([])
     const [imgSide, setImgSide] = useState(imagesData.map(() => false ));
@@ -18,35 +16,25 @@ const ImageList = ({imagesData, imgStyle}) => {
     const [flag, setFlag] = useState(false);
 
     const toggleFlag = () => {
-        console.log('toggle flag ....')
         setFlag(previousState => !previousState); 
     };
 
     const turnImg = (name, index) => {
         const selected = selectedImg.find(item => item.index === index)
-        console.log('turn img .... ', imgSide[index], index, selected)
-        //if (imgSide[index]){
+
             if(!selected && selectedImg.length < 2)
                 setSelectedImg( prev => [...prev, {name, index}])
             else if (selectedImg.length === 2)
                 setSelectedImg([{name, index}])
-        //} //else
-        //    imgSide[index] = true
     }
-        
-    //console.log('in imageList .... ', Data)
-      
        
     useEffect (() => {
-        console.log('useEffect .... image clicked')
         if (selectedImg.length === 2 && selectedImg[0].name === selectedImg[1].name)
             setMatchedImg((prev) => [...prev, ...selectedImg])
         else if (selectedImg.length === 2) {
             imgSide[selectedImg[0].index] = false;
             imgSide[selectedImg[1].index] = false
-            //setImgSide(...[imgSide])
             setTimeout(() => {
-                console.log('waitning .... ')
                 toggleFlag()
             }, 500);
         }
@@ -56,11 +44,6 @@ const ImageList = ({imagesData, imgStyle}) => {
         if (imagesData.length && imagesData.length === matchedImg.length)
             setIsGameOver(true)
     }, [matchedImg])
-
-
-  console.log('imageSide .... ', imgSide)
-  console.log('selectImg, matches, gameover... ', selectedImg, matchedImg, isGameOver)
-
 
     return (
         <>
@@ -85,7 +68,6 @@ const ImageList = ({imagesData, imgStyle}) => {
                 <View>
                     <Pressable onPress={() =>{
                         const imgName = item.uri.split('\\').pop().split('/').pop().split('.').shift();
-                        console.log('pressed on ..... ', index, imgName);
                         imgSide[index] ? true : imgSide[index] = true
                         turnImg(imgName, index)
                         toggleFlag()
