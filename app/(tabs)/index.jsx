@@ -4,7 +4,6 @@ import {
   StyleSheet,
   ScrollView,
   SafeAreaView,
-  FlatList,
   Pressable,
   Image,
 } from "react-native";
@@ -12,6 +11,7 @@ import { createContext, useContext, useState } from "react";
 import { Redirect, Link } from "expo-router";
 import { UserContext } from "../../context/User";
 import TimeAgo from "@/components/TimeAgo";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 const dummyFriendUser = {
   username: "your_fav_ai",
@@ -91,35 +91,6 @@ function GameScores({ scoreboard }) {
   );
 }
 
-// function TimeAgo({ created_at }) {
-//   const now = new Date();
-//   const past = new Date(created_at);
-//   const diffInSeconds = Math.floor((now - past) / 1000);
-
-//   const units = [
-//     { name: "year", seconds: 31536000 },
-//     { name: "month", seconds: 2592000 },
-//     { name: "week", seconds: 604800 },
-//     { name: "day", seconds: 86400 },
-//     { name: "hour", seconds: 3600 },
-//     { name: "minute", seconds: 60 },
-//     { name: "second", seconds: 1 },
-//   ];
-
-//   for (const unit of units) {
-//     const interval = Math.floor(diffInSeconds / unit.seconds);
-//     if (interval >= 1) {
-//       return (
-//         <Text>
-//           {interval} {unit.name}
-//           {interval !== 1 ? "s" : ""} ago
-//         </Text>
-//       );
-//     }
-//   }
-//   return <Text>Just now</Text>;
-// }
-
 function FriendActivity({ user, created_at }) {
   const { avatar_img_url, name, username } = user;
   return (
@@ -171,6 +142,19 @@ function FriendGameActivity({ scoreboard, user }) {
 
 export default function HomeScreen() {
   const { user, setUser } = useContext(UserContext);
+
+  const containerBg = useThemeColor({}, "container");
+  const scoreBg = useThemeColor({}, "scoreContainer");
+  const scoreBorder = useThemeColor({}, "scoreBorder");
+  const friendBg = useThemeColor({}, "friendContainer");
+  const textColor = useThemeColor({}, "text");
+  const usernameColor = useThemeColor({}, "username");
+  const buttonBg = useThemeColor({}, "button");
+  const buttonBorder = useThemeColor({}, "buttonBorder");
+  const examButtonBg = useThemeColor({}, "examButton");
+  const examContainerBg = useThemeColor({}, "examContainer");
+  const dateColor = useThemeColor({}, "date");
+
   console.log(user);
   if (user) {
     return (
