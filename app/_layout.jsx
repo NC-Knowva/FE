@@ -89,13 +89,12 @@ export default function RootLayout() {
 
 const styles = StyleSheet.create({
   logo: {
-    width: 65,
-    height: 65,
-    marginLeft: 3,
+    width: 45,
+    height: 45,
   },
   profileImage: {
-    width: 53,
-    height: 53,
+    width: 35,
+    height: 35,
     marginRight: 10,
     marginTop: 2,
     borderRadius: 55 / 2,
