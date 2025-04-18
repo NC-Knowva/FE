@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useState } from "react";
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   ScrollView,
   SafeAreaView,
 } from "react-native";
-import { Link, Stack } from "expo-router";
+import { Link, Stack, router, useLocalSearchParams } from "expo-router";
 import Entypo from "@expo/vector-icons/Entypo";
 import TimeAgo from "@/components/TimeAgo";
 
@@ -45,14 +45,35 @@ function ChatBox({ user }) {
 }
 
 export default function Messaging() {
+  const { filter } = useLocalSearchParams();
+  const [filterChats, onFilterChats] = useState(filter);
+
   return (
     <ScrollView>
       <SafeAreaView>
         <Stack.Screen options={{ title: "Messaging" }} />
         <View style={styles.messageBar}>
-          <Text style={styles.barElement}>All</Text>
-          <Text style={styles.barElement}>Friend</Text>
-          <Text style={styles.barElement}>Study Groups</Text>
+          <Pressable
+            onPress={() => {
+              router.setParams({ filter: "all" });
+            }}
+          >
+            <Text style={styles.barElement}>All</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => {
+              router.setParams({ filter: "friends" });
+            }}
+          >
+            <Text style={styles.barElement}>Friend</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => {
+              router.setParams({ filter: "study_groups" });
+            }}
+          >
+            <Text style={styles.barElement}>Study Groups</Text>
+          </Pressable>
           <Link style={styles.button} href="../(messaging)/new_message" asChild>
             <Pressable>
               <Entypo
