@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
 import { Link, Stack, router, useLocalSearchParams } from "expo-router";
 import Entypo from "@expo/vector-icons/Entypo";
 import TimeAgo from "@/components/TimeAgo";
+import { getUsers } from "../../endpoints";
 
 const dummyUser = {
   username: "iheartsocio",
@@ -47,6 +48,15 @@ function ChatBox({ user }) {
 export default function Messaging() {
   const { filter } = useLocalSearchParams();
   const [filterChats, onFilterChats] = useState(filter);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    getUsers()
+      .then((users) => {
+        setUsers(users);
+      })
+      .catch((error) => {});
+  }, []);
 
   return (
     <ScrollView>
@@ -96,20 +106,9 @@ export default function Messaging() {
         </View>
 
         <View style={styles.friendMessages}>
-          <ChatBox user={dummyUser} />
-          <ChatBox user={dummyUser} />
-          <ChatBox user={dummyUser} />
-          <ChatBox user={dummyUser} />
-          <ChatBox user={dummyUser} />
-          <ChatBox user={dummyUser} />
-          <ChatBox user={dummyUser} />
-          <ChatBox user={dummyUser} />
-          <ChatBox user={dummyUser} />
-          <ChatBox user={dummyUser} />
-          <ChatBox user={dummyUser} />
-          <ChatBox user={dummyUser} />
-          <ChatBox user={dummyUser} />
-          <ChatBox user={dummyUser} />
+          {users.map((user) => {
+            return <ChatBox user={user} />;
+          })}
         </View>
       </SafeAreaView>
     </ScrollView>
