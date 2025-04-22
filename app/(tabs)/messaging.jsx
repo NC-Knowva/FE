@@ -24,13 +24,18 @@ const dummyUser = {
 
 function ChatBox({ user }) {
   return (
-    <Link href={`../(messaging)/${user.username}`} asChild>
-      <Pressable>
-        <View style={styles.chatCard}>
+    <View style={styles.chatCard}>
+      <Link href={`../profile/${user.username}`} asChild>
+        <Pressable>
           <Image
             style={styles.chatCardImage}
             source={{ uri: user.avatar_img_url }}
           />
+        </Pressable>
+      </Link>
+
+      <Link href={`../(messaging)/${user.username}`} asChild>
+        <Pressable>
           <View style={styles.messageInfo}>
             <Text style={styles.friendName}>{user.name}</Text>
             <Text style={styles.friendUsername}>@{user.username}</Text>
@@ -39,9 +44,9 @@ function ChatBox({ user }) {
             </Text>
           </View>
           <TimeAgo created_at={user.created_at} />
-        </View>
-      </Pressable>
-    </Link>
+        </Pressable>
+      </Link>
+    </View>
   );
 }
 

@@ -11,3 +11,9 @@ export function getUsers() {
     return data.users;
   });
 }
+export function getUserByUsername(username) {
+  return apiClient.get(`/users/${username}`).then(({ data }) => {
+    console.log(data.user);
+    return data.user;
+  });
+}

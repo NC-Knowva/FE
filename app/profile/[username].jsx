@@ -8,28 +8,28 @@ import {
 } from "react-native";
 import { Link, Stack, Redirect } from "expo-router";
 
-import { React, useContext } from "react";
+import { React, useState, useEffect, useContext } from "react";
 import { UserContext } from "../../context/User";
 import { useLocalSearchParams } from "expo-router";
+import { getUserByUsername } from "../../endpoints";
 
 export default function FriendProfile() {
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const { username } = useLocalSearchParams();
+  const [friendUser, setFriendUsers] = useState([]);
 
   if (user.username === username) {
     return <Redirect href="../profile" />;
   } else {
-    const friendUser = {
-      username: username,
-      name: "Addia Claricoats",
-      avatar_img_url:
-        "https://robohash.org/verodoloremfuga.png?size=50x50&set=set1",
-      education: "1",
-      settings: {},
-      calendar: {},
-      created_at: "2023-05-01T00:00:00.000Z",
-    };
+    useEffect(() => {
+      getUserByUsername(username)
+        .then((friendUser) => {
+          setFriendUsers(friendUser);
+        })
+        .catch((error) => {});
+    }, []);
 
+    console.log(friendUser);
     return (
       <ScrollView>
         <Stack.Screen options={{ title: "Profile" }} />
