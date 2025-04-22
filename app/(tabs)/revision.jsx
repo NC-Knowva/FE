@@ -159,10 +159,6 @@ export default function Revision() {
           </View>
         </Pressable>
       </View>
-      <View>
-        <Text>Activity: {activity.name}</Text>
-        <Text>Topic: {topic.name}</Text>
-      </View>
     </ScrollView>
   );
 }
