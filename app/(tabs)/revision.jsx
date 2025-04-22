@@ -1,61 +1,91 @@
 import { React, useState } from "react";
-import { View, Text, Pressable, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  ScrollView,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
+import { useRouter } from "expo-router";
 
-function RowMap({ rowItems, setItemSelected, i }) {
-  return (
-    <>
-      <View style={styles.selectRow}>
-        {rowItems.map((item, index) => {
-          return (
-            <Pressable
-              onPress={() => {
-                setItemSelected(item);
-              }}
-            >
-              {({ pressed }) => (
-                <View style={pressed ? styles.cardPressed : styles.card}>
-                  <Text>{item}</Text>
-                </View>
-              )}
-            </Pressable>
-          );
-        })}
-      </View>
-    </>
+function ItemsSelect({ items, itemSelected, setItemSelected }) {
+  const Item = ({ item, onPress, backgroundColor }) => (
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.card, { backgroundColor }]}
+    >
+      <Text>{item.name}</Text>
+    </TouchableOpacity>
   );
-}
-function ItemsMap({ items, setItemSelected }) {
-  const rowArray = [];
-  for (let i = 0; i < items.length; i = i + 3) {
-    const rowItems = [items[i], items[i + 1], items[i + 2]];
 
-    rowArray.push(rowItems);
+  function renderItem({ item }) {
+    const backgroundColor = item.id === itemSelected.id ? "lightblue" : "white";
+    const color = item.id === itemSelected.id ? "white" : "black";
+    return (
+      <Item
+        item={item}
+        onPress={() => setItemSelected(item)}
+        backgroundColor={backgroundColor}
+        textColor={color}
+      />
+    );
   }
-  return rowArray.map((row, i) => {
-    return <RowMap rowItems={row} setItemSelected={setItemSelected} i={i} />;
-  });
+
+  return (
+    <FlatList
+      data={items}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.id}
+      extraData={itemSelected.id}
+      style={styles.container}
+      numColumns={3}
+    />
+  );
 }
 
 export default function Revision() {
+  const router = useRouter();
   const activities = [
-    "Revision Cards",
-    "Card Flipper",
-    "Another Game",
-    "Another Game",
-    "Another Game",
-    "Another Game",
+    { name: "Revision Cards", id: 1 },
+    { name: "Card Flipper", id: 2 },
+    { name: "Another Activity", id: 3 },
+    { name: "Another Activity", id: 4 },
+    { name: "Another Activity", id: 5 },
+    { name: "Another Activity", id: 6 },
   ];
   const topics = [
-    "Arts",
-    "Science",
-    "Another Topic",
-    "Another Topic",
-    "Another Topic",
-    "Another Topic",
+    { name: "Arts", id: 1 },
+    { name: "Science", id: 2 },
+    { name: "Another Topic", id: 3 },
+    { name: "Another Topic", id: 4 },
+    { name: "Another Topic", id: 5 },
+    { name: "Another Topic", id: 6 },
   ];
 
   const [activity, setActivity] = useState("");
   const [topic, setTopic] = useState("");
+
+  function playGameSingle() {
+    if (activity === "" || topic === "") {
+      return null;
+    } else {
+      switch (activity.name) {
+        case "Revision Cards":
+          break;
+        case "Card Flipper":
+          router.navigate(`../game?topic=${topic.name}`);
+          break;
+        case "Another Activity":
+          break;
+      }
+    }
+  }
+  function playGameMultiple() {
+    return null;
+  }
+
   return (
     <ScrollView>
       <View style={styles.continueActivity}>
@@ -90,10 +120,18 @@ export default function Revision() {
         <Text style={styles.newActivityHeading}>New Activity</Text>
 
         <Text style={styles.newActivitySubHeading}>Select Activity:</Text>
-        <ItemsMap items={activities} setItemSelected={setActivity} />
+        <ItemsSelect
+          items={activities}
+          itemSelected={activity}
+          setItemSelected={setActivity}
+        />
 
         <Text style={styles.newActivitySubHeading}>Select Card Pack:</Text>
-        <ItemsMap items={activities} setItemSelected={setTopic} />
+        <ItemsSelect
+          items={topics}
+          itemSelected={topic}
+          setItemSelected={setTopic}
+        />
 
         <View style={styles.actionRow}>
           <Pressable>
@@ -110,20 +148,20 @@ export default function Revision() {
       </View>
 
       <View style={styles.actionRow}>
-        <Pressable>
+        <Pressable onPress={playGameSingle}>
           <View style={styles.playButtons}>
             <Text style={styles.playText}>Play</Text>
           </View>
         </Pressable>
-        <Pressable>
+        <Pressable onPress={playGameMultiple}>
           <View style={styles.playButtons}>
             <Text style={styles.playText}>Challenge a Friend</Text>
           </View>
         </Pressable>
       </View>
       <View>
-        <Text>Activity: {activity}</Text>
-        <Text>Topic: {topic}</Text>
+        <Text>Activity: {activity.name}</Text>
+        <Text>Topic: {topic.name}</Text>
       </View>
     </ScrollView>
   );
@@ -182,7 +220,6 @@ const styles = StyleSheet.create({
     padding: "5px",
     marginTop: 10,
   },
-  selectRow: { flexDirection: "row", justifyContent: "space-evenly" },
   card: {
     flex: 1,
     backgroundColor: "white",
@@ -196,19 +233,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderColor: "grey",
   },
-  cardPressed: {
-    flex: 1,
-    backgroundColor: "lightblue",
-    alignItems: "center",
-    textAlign: "center",
-    margin: 5,
-    height: "auto",
-    padding: 10,
-    fontSize: 15,
-    borderWidth: 1,
-    borderRadius: 5,
-    borderColor: "grey",
-  },
+
   actionRow: {
     flexDirection: "row",
     justifyContent: "space-evenly",
@@ -242,5 +267,10 @@ const styles = StyleSheet.create({
   playText: {
     fontSize: 20,
     textAlign: "center",
+  },
+  container: {
+    flex: 1,
+    height: 200,
+    paddingBottom: 20,
   },
 });
