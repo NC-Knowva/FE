@@ -1,49 +1,7 @@
 import { React, useState } from "react";
-import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  ScrollView,
-  FlatList,
-  TouchableOpacity,
-} from "react-native";
-import { useRouter } from "expo-router";
-
-function ItemsSelect({ items, itemSelected, setItemSelected }) {
-  const Item = ({ item, onPress, backgroundColor }) => (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[styles.card, { backgroundColor }]}
-    >
-      <Text>{item.name}</Text>
-    </TouchableOpacity>
-  );
-
-  function renderItem({ item }) {
-    const backgroundColor = item.id === itemSelected.id ? "lightblue" : "white";
-    const color = item.id === itemSelected.id ? "white" : "black";
-    return (
-      <Item
-        item={item}
-        onPress={() => setItemSelected(item)}
-        backgroundColor={backgroundColor}
-        textColor={color}
-      />
-    );
-  }
-
-  return (
-    <FlatList
-      data={items}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.id}
-      extraData={itemSelected.id}
-      style={styles.container}
-      numColumns={3}
-    />
-  );
-}
+import { View, Text, Pressable, StyleSheet, ScrollView } from "react-native";
+import { Link, useRouter } from "expo-router";
+import ItemsSelect from "@/components/ItemsSelect";
 
 export default function Revision() {
   const router = useRouter();
@@ -134,11 +92,13 @@ export default function Revision() {
         />
 
         <View style={styles.actionRow}>
-          <Pressable>
-            <View style={styles.actionButton}>
-              <Text>Add New Cards</Text>
-            </View>
-          </Pressable>
+          <Link href={"../newCard"} asChild>
+            <Pressable>
+              <View style={styles.actionButton}>
+                <Text>Add New Cards</Text>
+              </View>
+            </Pressable>
+          </Link>
           <Pressable>
             <View style={styles.actionButton}>
               <Text>View Your Cards</Text>
