@@ -134,7 +134,6 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
   groupIcon: {
-    marginright: 10,
     padding: 5
   },
   studyGroup: {
