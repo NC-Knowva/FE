@@ -8,11 +8,11 @@ import {
 } from "react-native";
 import { Link, Stack, Redirect } from "expo-router";
 import { UserContext } from "../context/User";
-
-import { React, useContext } from "react";
+import { React, useContext, useState, useEffect } from "react";
 
 export default function App() {
   const { user, setUser } = useContext(UserContext);
+
   if (user) {
     return (
       <ScrollView>
@@ -32,7 +32,7 @@ export default function App() {
                 </View>
               </View>
               <View style={styles.row}>
-                <Link href="../topics" asChild>
+                <Link href="./profile/myCards" asChild>
                   <Pressable>
                     <Text style={styles.elementStats}>10 Topics</Text>
                   </Pressable>
