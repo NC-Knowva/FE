@@ -22,7 +22,7 @@ export function getCards() {
   return apiClient.get(`/cards`).then(({ data }) => {
     return data.cards;
   });
-
+}
 export function getMessagesByUsername(username) {
   return apiClient.get(`/users/${username}/messages`).then(({data}) => {
     return data.messages
