@@ -16,38 +16,26 @@ import {
   getUserByUsername,
   getMessagesByUsername,
   getScores,
+  getGames,
 } from "@/endpoints";
 
-//get scoreboard
 
-const dummyScores = {
-  username: "iheartsocio",
-  game_type: "quiz",
-  game_name: "Brain Sum Blitz",
-  topic: "Normal Distribution and Missing Parameters",
-  subject: "Maths",
-  score: { correct: 9, incorrect: 1, time: 95 },
-};
-
-// get scoreboard
-
-function GameScores({ scoreboard }) {
-  //will also need a api call to api/games to get the game_name, subject_name and topic_name join on game_id
-  //could also use to get the game name in the friends section
-  const { score, game_name, topic, subject } = scoreboard;
-  //const {game_name, subject_name, topic_name} = games
-  // if(scoreboard.game_id === games_game_id)
+function GameScores({ scoreboard, game }) {
+  const { score } = scoreboard;
   const scorePercentage =
-    (score.correct / (score.correct + score.incorrect)) * 100;
+  (score.correct / (score.correct + score.incorrect)) * 100;
+ 
+  if (!game || game.game_id !== scoreboard.game_id) return null;
+
   return (
     <View style={styles.row}>
       <View style={styles.scoreContainer}>
         <Text style={styles.scoreText}>{scorePercentage}%</Text>
       </View>
       <View style={styles.activityInfoContainer}>
-        <Text style={styles.friendName}>{game_name}</Text>
-        <Text>{subject}</Text>
-        <Text style={styles.friendUsername}>{topic}</Text>
+        <Text style={styles.friendName}>{game.game_name || "Unknown Game"}</Text>
+        <Text>{game.subject_name || "No subject"}</Text>
+        <Text style={styles.friendUsername}>{game.topic_name || "No Topic"}</Text>
       </View>
     </View>
   );
@@ -105,17 +93,21 @@ export default function HomeScreen() {
   const [friendUser, setFriendUser] = useState(null);
   const [friendActivities, setFriendActivities] = useState([]);
   const [friendMessages, setFriendMessages] = useState([]);
+  const [userScores, setUserScores] = useState([])
+  const [userGames, setUserGames] = useState([])
 
   useEffect(() => {
     async function fetchFriendData() {
       try {
         const scoreboard = await getScores();
+        const games = await getGames()
 
         const gameActivities = await Promise.all(
           scoreboard.map(async (scores) => {
             try {
               if (scores.username !== user.username) {
                 const friend = await getUserByUsername(scores.username);
+
 
                 return {
                   type: "game",
@@ -125,7 +117,7 @@ export default function HomeScreen() {
                 };
               }
             } catch (error) {
-              console.log("Error fetching friend", error);
+              console.log("Error fetching friend ", error);
               return null;
             }
           })
@@ -158,12 +150,27 @@ export default function HomeScreen() {
         setFriendMessages(messages);
         setFriendActivities(activities);
       } catch (error) {
-        console.error("Error fetching friend data:", error);
+        console.log("Error fetching friend data:", error);
       }
+    }
+
+    async function fetchUserScoreData() {
+        try {
+          const allScores = await getScores()
+          const allGames = await getGames ()
+
+          const filteredScores = allScores.filter((score) => score.username === user.username)
+
+          setUserScores(filteredScores)
+          setUserGames(allGames)
+        } catch (error) {
+          console.log("Error fetching user scores or games", erroe)
+        }
     }
 
     if (user?.username) {
       fetchFriendData();
+      fetchUserScoreData()
     }
   }, [user]);
 
@@ -210,7 +217,18 @@ export default function HomeScreen() {
             <Link href="/revision" asChild>
               <Pressable>
                 <Text style={styles.title}>Play again</Text>
-                <GameScores scoreboard={dummyScores} />
+                {userScores.map((scoreObj, index) => {
+                const gameInfo = userGames.find(
+                  (game) => game.game_id === scoreObj.game_id
+                );
+                return (
+                  <GameScores
+                    key={index}
+                    scoreboard={scoreObj}
+                    game={gameInfo}
+                  />
+                );
+              })}
               </Pressable>
             </Link>
             <Link style={styles.button} href="/revision" asChild>
@@ -282,6 +300,7 @@ export default function HomeScreen() {
                     <FriendGameActivity
                       scoreboard={activity.scores}
                       user={activity.user}
+
                     />
                   ) : activity.type === "message" ? (
                     <FriendActivity
