@@ -21,3 +21,8 @@ export function getMessagesByUsername(username) {
     return data.messages
   })
 }
+export function getScores(){
+  return apiClient.get(`/scoreboard`).then(({data}) => {
+    return data.scoreboard
+  })
+}

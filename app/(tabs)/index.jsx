@@ -12,7 +12,11 @@ import { Redirect, Link } from "expo-router";
 import { UserContext } from "../../context/User";
 import TimeAgo from "@/components/TimeAgo";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { getUserByUsername, getMessagesByUsername } from "@/endpoints";
+import {
+  getUserByUsername,
+  getMessagesByUsername,
+  getScores,
+} from "@/endpoints";
 
 //get scoreboard
 
@@ -27,18 +31,12 @@ const dummyScores = {
 
 // get scoreboard
 
-const dummyFriendScores = {
-  username: "your_fav_ai",
-  game_type: "quiz",
-  game_name: "Brain Sum Blitz",
-  topic: "Normal Distribution and Missing Parameters",
-  subject: "Maths",
-  score: { correct: 8, incorrect: 2, time: 125 },
-  created_at: "2025-04-04T00:00:00.000Z",
-};
-
 function GameScores({ scoreboard }) {
+  //will also need a api call to api/games to get the game_name, subject_name and topic_name join on game_id
+  //could also use to get the game name in the friends section
   const { score, game_name, topic, subject } = scoreboard;
+  //const {game_name, subject_name, topic_name} = games
+  // if(scoreboard.game_id === games_game_id)
   const scorePercentage =
     (score.correct / (score.correct + score.incorrect)) * 100;
   return (
@@ -78,7 +76,7 @@ function FriendActivity({ user, created_at }) {
 }
 
 function FriendGameActivity({ scoreboard, user }) {
-  const { score, game_name, username, created_at } = scoreboard;
+  const { score, username, created_at } = scoreboard;
   const { avatar_img_url, name } = user;
   const scorePercentage =
     (score.correct / (score.correct + score.incorrect)) * 100;
@@ -94,9 +92,7 @@ function FriendGameActivity({ scoreboard, user }) {
         <TimeAgo created_at={created_at} />
         <Text>
           <Text style={styles.friendName}>{name} </Text>
-          <Text>
-            scored {scorePercentage}% in {game_name}
-          </Text>
+          <Text>scored {scorePercentage}% in a game</Text>
         </Text>
         <Text style={styles.friendUsername}>@{username}</Text>
       </View>
@@ -111,41 +107,51 @@ export default function HomeScreen() {
   const [friendMessages, setFriendMessages] = useState([]);
 
   useEffect(() => {
-    let fetchedUser = null;
-
     async function fetchFriendData() {
       try {
-        const friend = await getUserByUsername("your_fav_ai");
-        setFriendUser(friend);
-        fetchedUser = friend;
+        const scoreboard = await getScores();
+
+        const gameActivities = await Promise.all(
+          scoreboard.map(async (scores) => {
+            try {
+              if (scores.username !== user.username) {
+                const friend = await getUserByUsername(scores.username);
+
+                return {
+                  type: "game",
+                  created_at: scores.created_at,
+                  user: friend,
+                  scores: scores,
+                };
+              }
+            } catch (error) {
+              console.log("Error fetching friend", error);
+              return null;
+            }
+          })
+        );
 
         const messages = await getMessagesByUsername(user.username);
-
 
         const messageActivities = await Promise.all(
           messages.map(async (msg) => {
             try {
               const sender = await getUserByUsername(msg.sender_username);
-              if(msg.sender_username !== user.username)
-              return {
-                type: "message",
-                created_at: msg.created_at,
-                user: sender,
-              };
-            } catch (err) {
-              console.error("Error fetching sender:", err);
+              if (msg.sender_username !== user.username)
+                return {
+                  type: "message",
+                  created_at: msg.created_at,
+                  user: sender,
+                };
+            } catch (error) {
+              console.log("Error fetching sender:", error);
               return null;
             }
           })
         );
 
         const activities = [
-          {
-            type: "game",
-            created_at: dummyFriendScores.created_at,
-            user: fetchedUser,
-            scores: dummyFriendScores,
-          },
+          ...gameActivities.filter(Boolean),
           ...messageActivities.filter(Boolean),
         ];
 
