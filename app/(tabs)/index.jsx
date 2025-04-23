@@ -33,11 +33,11 @@ function GameScores({ scoreboard, game }) {
       </View>
       <View style={styles.activityInfoContainer}>
         <Text style={styles.friendName}>
-          {game.game_name || "Unknown Game"}
+          {game.game_name }
         </Text>
-        <Text>{game.subject_name || "No subject"}</Text>
+        <Text>{game.subject_name }</Text>
         <Text style={styles.friendUsername}>
-          {game.topic_name || "No Topic"}
+          {game.topic_name }
         </Text>
       </View>
     </View>
@@ -202,7 +202,7 @@ export default function HomeScreen() {
     return (
       <ScrollView>
         <SafeAreaView>
-          <View style={styles.container}>
+          <View style={styles.headerContainer}>
             <Text style={styles.title}>Daily Revision Progress</Text>
             <View style={styles.row}>
               <View style={styles.imageContainer}>
@@ -234,11 +234,13 @@ export default function HomeScreen() {
                     (game) => game.game_id === scoreObj.game_id
                   );
                   return (
-                    <GameScores
-                      key={index}
-                      scoreboard={scoreObj}
-                      game={gameInfo}
-                    />
+                    <View style={styles.friendContainer}>
+                      <GameScores
+                        key={index}
+                        scoreboard={scoreObj}
+                        game={gameInfo}
+                      />
+                    </View>
                   );
                 })}
               </Pressable>
@@ -346,14 +348,22 @@ const styles = StyleSheet.create({
     left: 0,
     position: "absolute",
   },
+  headerContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "lightgrey",
+    width: "100%",
+  },
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 10,
     backgroundColor: "lightgrey",
-    paddingVertical: 10,
+    paddingVertical: 40,
     width: "100%",
+
   },
   scoreContainer: {
     width: 80,
@@ -365,6 +375,7 @@ const styles = StyleSheet.create({
     borderColor: "lightblue",
     borderWidth: 4,
     marginLeft: 20,
+    margin: 5, 
   },
   friendContainer: {
     alignSelf: "center",
