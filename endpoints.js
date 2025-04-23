@@ -13,7 +13,11 @@ export function getUsers() {
 }
 export function getUserByUsername(username) {
   return apiClient.get(`/users/${username}`).then(({ data }) => {
-    console.log(data.user);
     return data.user;
   });
+}
+export function getMessagesByUsername(username) {
+  return apiClient.get(`/users/${username}/messages`).then(({data}) => {
+    return data.messages
+  })
 }
