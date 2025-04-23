@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 
-
 import ImageList from "./ImageList";
 import { getCards } from "../endpoints";
 import { useLocalSearchParams } from "expo-router";
@@ -38,14 +37,9 @@ export default function HomeScreen() {
       })
       .catch((error) => {});
   }, []);
-  console.log(cards);
+
   const items = Object.keys(cards);
   const shuffledCards = shuffleImages([...items, ...items]);
 
-  return (
-    <ImageList
-      shuffledCards={shuffledCards}
-      cards={cards}
-    />
-  );
+  return <ImageList shuffledCards={shuffledCards} cards={cards} />;
 }
