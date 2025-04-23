@@ -1,7 +1,8 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import { View, Text, Pressable, StyleSheet, ScrollView } from "react-native";
 import { Link, useRouter } from "expo-router";
 import ItemsSelect from "@/components/ItemsSelect";
+import { getCards } from "../../endpoints";
 
 export default function Revision() {
   const router = useRouter();
@@ -9,14 +10,19 @@ export default function Revision() {
     { name: "Quick Quiz", id: 1 },
     { name: "Card Flipper", id: 2 },
   ];
-  const topics = [
-    { name: "Arts", id: 1 },
-    { name: "Science", id: 2 },
-    { name: "Another Topic", id: 3 },
-    { name: "Another Topic", id: 4 },
-    { name: "Another Topic", id: 5 },
-    { name: "Another Topic", id: 6 },
-  ];
+
+  const [topics, setTopics] = useState([]);
+
+  useEffect(() => {
+    getCards()
+      .then((topics) => {
+        const formattedTopics = topics.map((topic) => {
+          return { id: topic.pack_id, name: topic.name };
+        });
+        setTopics(formattedTopics);
+      })
+      .catch((error) => {});
+  }, []);
 
   const [activity, setActivity] = useState("");
   const [topic, setTopic] = useState("");
@@ -104,7 +110,7 @@ export default function Revision() {
         </View>
       </View>
 
-      <View style={styles.actionRow}>
+      <View style={styles.playRow}>
         <Pressable onPress={playGameSingle}>
           <View style={styles.playButtons}>
             <Text style={styles.playText}>Play</Text>
@@ -177,6 +183,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-evenly",
     margin: 10,
+  },
+  playRow: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    margin: 10,
+    marginBottom: 100,
   },
   actionButton: {
     flex: 1,

@@ -16,6 +16,13 @@ export function getUserByUsername(username) {
     return data.user;
   });
 }
+
+
+export function getCards() {
+  return apiClient.get(`/cards`).then(({ data }) => {
+    return data.cards;
+  });
+
 export function getMessagesByUsername(username) {
   return apiClient.get(`/users/${username}/messages`).then(({data}) => {
     return data.messages
@@ -30,4 +37,5 @@ export function getGames(){
   return apiClient.get(`/games`).then(({data}) => {
     return data.games
   })
+
 }

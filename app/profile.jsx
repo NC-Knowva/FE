@@ -73,7 +73,7 @@ export default function App() {
             <Link style={styles.button} href="../loginUser" asChild>
               <Pressable
                 onPress={() => {
-                  setUser(null);
+                  setUser(0);
                 }}
               >
                 <Text>Log out</Text>
