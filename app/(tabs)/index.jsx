@@ -226,15 +226,14 @@ export default function HomeScreen() {
             </View>
           </View>
           <View style={styles.container}>
-            <Link href="/revision" asChild>
-              <Pressable>
+            
                 <Text style={styles.title}>Play again</Text>
                 {userScores.map((scoreObj, index) => {
                   const gameInfo = userGames.find(
                     (game) => game.game_id === scoreObj.game_id
                   );
                   return (
-                    <View style={styles.friendContainer}>
+                    <View key={`score-${scoreObj.game_id}-${index}`}  style={styles.friendContainer}>
                       <GameScores
                         key={index}
                         scoreboard={scoreObj}
@@ -243,8 +242,7 @@ export default function HomeScreen() {
                     </View>
                   );
                 })}
-              </Pressable>
-            </Link>
+              
             <Link style={styles.button} href="/revision" asChild>
               <Pressable>
                 <Text>Play a new game</Text>
@@ -354,14 +352,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "lightgrey",
     width: "100%",
+    paddingVertical: 10,
   },
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 10,
+    marginTop: 15,
     backgroundColor: "lightgrey",
-    paddingVertical: 40,
+    paddingVertical: 10,
     width: "100%",
 
   },
@@ -376,6 +375,7 @@ const styles = StyleSheet.create({
     borderWidth: 4,
     marginLeft: 20,
     margin: 5, 
+    flexShrink: 0,
   },
   friendContainer: {
     alignSelf: "center",
@@ -443,6 +443,7 @@ const styles = StyleSheet.create({
   activityInfoContainer: {
     flex: 1,
     paddingHorizontal: 10,
+    minWidth: 0,
   },
   button: {
     backgroundColor: "white",

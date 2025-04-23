@@ -28,7 +28,7 @@ export default function App() {
             <View style={styles.userContainer}>
               <View style={styles.row}>
                 <View style={styles.username}>
-                  <Text style={styles.usernameText}>{user.name}</Text>
+                  <Text style={styles.usernameText}>Welcome back {user.name}! </Text>
                 </View>
               </View>
               <View style={styles.row}>
@@ -73,7 +73,7 @@ export default function App() {
             <Link style={styles.button} href="../loginUser" asChild>
               <Pressable
                 onPress={() => {
-                  setUser(null);
+                  setUser(0);
                 }}
               >
                 <Text>Log out</Text>
@@ -112,12 +112,18 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "top",
     justifyContent: "top",
+    backgroundColor: "linen",
   },
   imageContainer: {
     flex: 1,
-    flexGrow: 1,
-    alignItems: "top",
-    justifyContent: "top",
+    backgroundColor: "white",
+    // borderColor: "black",
+    // borderWidth: 3,
+    borderRadius: 30,
+    margin: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
   },
   userContainer: {
     flex: 1,
@@ -129,6 +135,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "top",
     justifyContent: "top",
+    // backgroundColor: "linen"
   },
   row: {
     flexDirection: "row",
@@ -148,14 +155,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   usernameText: {
-    alignItems: "left",
+    flex: "wrap",
+    textAlign: "center",
     height: "auto",
-    padding: "20px",
+    padding: 10,
+    fontWeight: "bold",
+    fontSize: 30
   },
   image: {
-    width: "auto",
+    width: "100%",
     height: 200,
-    objectFit: "contain",
+    resizeMode: "contain",
+    
   },
   button: {
     backgroundColor: "white",
@@ -200,4 +211,10 @@ const styles = StyleSheet.create({
   sectionGrid: {
     padding: 5,
   },
+  elementUsername: {
+    color: "dimgrey",
+    fontSize: 15,
+    marginLeft: 10,
+    fontWeight: "bold"
+  }
 });

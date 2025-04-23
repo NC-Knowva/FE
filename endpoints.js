@@ -31,3 +31,4 @@ export function getGames(){
     return data.games
   })
 }
+
