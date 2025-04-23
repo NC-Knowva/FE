@@ -17,8 +17,25 @@ export function getUserByUsername(username) {
   });
 }
 
+
 export function getCards() {
   return apiClient.get(`/cards`).then(({ data }) => {
     return data.cards;
   });
+
+export function getMessagesByUsername(username) {
+  return apiClient.get(`/users/${username}/messages`).then(({data}) => {
+    return data.messages
+  })
+}
+export function getScores(){
+  return apiClient.get(`/scoreboard`).then(({data}) => {
+    return data.scoreboard
+  })
+}
+export function getGames(){
+  return apiClient.get(`/games`).then(({data}) => {
+    return data.games
+  })
+
 }
