@@ -6,12 +6,8 @@ import ItemsSelect from "@/components/ItemsSelect";
 export default function Revision() {
   const router = useRouter();
   const activities = [
-    { name: "Revision Cards", id: 1 },
+    { name: "Quick Quiz", id: 1 },
     { name: "Card Flipper", id: 2 },
-    { name: "Another Activity", id: 3 },
-    { name: "Another Activity", id: 4 },
-    { name: "Another Activity", id: 5 },
-    { name: "Another Activity", id: 6 },
   ];
   const topics = [
     { name: "Arts", id: 1 },
@@ -30,7 +26,8 @@ export default function Revision() {
       return null;
     } else {
       switch (activity.name) {
-        case "Revision Cards":
+        case "Quick Quiz":
+          router.navigate(`../quiz?topic=${topic.name}`);
           break;
         case "Card Flipper":
           router.navigate(`../game?topic=${topic.name}`);
@@ -174,20 +171,6 @@ const styles = StyleSheet.create({
     textAlign: "left",
     fontSize: 16,
     padding: "5px",
-    marginTop: 10,
-  },
-  card: {
-    flex: 1,
-    backgroundColor: "white",
-    alignItems: "center",
-    textAlign: "center",
-    margin: 5,
-    height: "auto",
-    padding: 10,
-    fontSize: 15,
-    borderWidth: 1,
-    borderRadius: 5,
-    borderColor: "grey",
   },
 
   actionRow: {
@@ -211,9 +194,7 @@ const styles = StyleSheet.create({
   playButtons: {
     flex: 1,
     backgroundColor: "lightgreen",
-
     alignItems: "center",
-
     margin: 5,
     padding: 10,
     borderWidth: 1,
@@ -223,10 +204,5 @@ const styles = StyleSheet.create({
   playText: {
     fontSize: 20,
     textAlign: "center",
-  },
-  container: {
-    flex: 1,
-    height: 200,
-    paddingBottom: 20,
   },
 });
