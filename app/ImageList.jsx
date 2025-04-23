@@ -1,99 +1,241 @@
-import { useEffect, useState } from "react";
-import { Text, View, Image, Pressable, FlatList } from "react-native";
-
+import { React, useEffect, useState } from "react";
+import {
+  Text,
+  View,
+  Image,
+  Pressable,
+  FlatList,
+  StyleSheet,
+} from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import { Link, Stack } from "expo-router";
 import questionMark from "../assets/images/question-mark.png";
 
 function timeout(delay) {
   return new Promise((res) => setTimeout(res, delay));
 }
-const ImageList = ({ imagesData, imgStyle }) => {
-  const [selectedImg, setSelectedImg] = useState([]);
-  const [matchedImg, setMatchedImg] = useState([]);
-  const [imgSide, setImgSide] = useState(imagesData.map(() => false));
+
+export default function ImageList({ shuffledCards, cards }) {
+  const [selectedCard, setSelectedCard] = useState([]);
+  const [matchedCard, setMatchedCard] = useState([]);
+  const [displayCard, setDisplayCard] = useState([]);
+  const [CardSide, setCardSide] = useState(shuffledCards.map(() => false));
 
   const [isGameOver, setIsGameOver] = useState(false);
   const [flag, setFlag] = useState(false);
+
+  function handleReset(
+    setSelectedCard,
+    setMatchedCard,
+    setDisplayCard,
+    setCardSide,
+    setIsGameOver,
+    setFlag
+  ) {
+    setSelectedCard([]);
+    setMatchedCard([]);
+    setDisplayCard([]);
+    setCardSide(shuffledCards.map(() => false));
+    setIsGameOver(false);
+    setFlag(false);
+  }
 
   const toggleFlag = () => {
     setFlag((previousState) => !previousState);
   };
 
-  const turnImg = (name, index) => {
-    const selected = selectedImg.find((item) => item.index === index);
+  const turnCard = (name, index) => {
+    const selected = selectedCard.find((item) => item.index === index);
 
-    if (!selected && selectedImg.length < 2)
-      setSelectedImg((prev) => [...prev, { name, index }]);
-    else if (selectedImg.length === 2) setSelectedImg([{ name, index }]);
+    if (!selected && selectedCard.length < 2)
+      setSelectedCard((prev) => [...prev, { name, index }]);
+    else if (selectedCard.length === 2) setSelectedCard([{ name, index }]);
   };
 
   useEffect(() => {
-    if (selectedImg.length === 2 && selectedImg[0].name === selectedImg[1].name)
-      setMatchedImg((prev) => [...prev, ...selectedImg]);
-    else if (selectedImg.length === 2) {
-      imgSide[selectedImg[0].index] = false;
-      imgSide[selectedImg[1].index] = false;
+    if (
+      selectedCard.length === 2 &&
+      selectedCard[0].name[1] === selectedCard[1].name[1] &&
+      selectedCard[0].name[0] !== selectedCard[1].name[0]
+    )
+      setMatchedCard((prev) => [...prev, ...selectedCard]);
+    else if (selectedCard.length === 2) {
+      CardSide[selectedCard[0].index] = false;
+      CardSide[selectedCard[1].index] = false;
       setTimeout(() => {
         toggleFlag();
       }, 500);
     }
-  }, [selectedImg]);
+  }, [selectedCard]);
 
   useEffect(() => {
-    if (imagesData.length && imagesData.length === matchedImg.length)
+    if (shuffledCards.length && shuffledCards.length === matchedCard.length)
       setIsGameOver(true);
-  }, [matchedImg]);
+  }, [matchedCard]);
 
-  return (
-    <>
-      <Text>
-        {isGameOver
-          ? "You WIN, all cards matched"
-          : matchedImg.length > 0
-          ? `You have mactched ${matchedImg.length} cards`
-          : "Press on image to play"}{" "}
-      </Text>
+  if (isGameOver) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.Wrapper}>
+          <Text style={{ fontWeight: "500", fontSize: 16, color: "#004643" }}>
+            You completed the Card Flipper
+          </Text>
+        </View>
+        <View style={styles.buttonGroup}>
+          <Pressable
+            style={styles.actionButton}
+            onPress={() => {
+              handleReset(
+                setSelectedCard,
+                setMatchedCard,
+                setDisplayCard,
+                setCardSide,
+                setIsGameOver,
+                setFlag
+              );
+            }}
+          >
+            <Text>Play Again</Text>
+          </Pressable>
 
-      <FlatList
-        data={imagesData}
-        keyExtractor={(_, index) => index}
-        contentContainerStyle={{
-          flexDirection: "row",
-          numColumns: 4,
-          flexWrap: "wrap",
-          justifyContent: "center",
-          width: "100%",
-          maxWidth: 400,
-          gap: 5,
-          marginTop: 20,
-        }}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<Text>No Game Available</Text>}
-        renderItem={({ item, index }) => (
-          <View>
-            <Pressable
-              onPress={() => {
-                const imgName = item.uri
-                  .split("\\")
-                  .pop()
-                  .split("/")
-                  .pop()
-                  .split(".")
-                  .shift();
-                imgSide[index] ? true : (imgSide[index] = true);
-                turnImg(imgName, index);
-                toggleFlag();
-              }}
-            >
-              <Image
-                source={imgSide[index] ? item : questionMark}
-                style={imgStyle}
-              />
+          <Link style={styles.actionButton} href="/revision" asChild>
+            <Pressable>
+              <Text>Exit</Text>
             </Pressable>
-          </View>
-        )}
-      />
-    </>
-  );
-};
+          </Link>
+        </View>
+      </View>
+    );
+  } else {
+    return (
+      <>
+        <Stack.Screen options={{ headerShown: false }} />
+        <Text style={styles.title}>
+          {matchedCard.length > 0
+            ? `You have mactched ${matchedCard.length} cards`
+            : "Press on image to play"}{" "}
+        </Text>
 
-export default ImageList;
+        <FlatList
+          data={shuffledCards}
+          keyExtractor={(_, index) => index}
+          contentContainerStyle={styles.flatList}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={<Text>No Game Available</Text>}
+          renderItem={({ item, index }) => (
+            <View>
+              <Pressable
+                style={styles.card}
+                onPress={() => {
+                  const cardName = `${item}`;
+                  CardSide[index] ? true : (CardSide[index] = true);
+                  turnCard(cardName, index);
+                  toggleFlag();
+                  setDisplayCard(cards[shuffledCards[index]]);
+                }}
+              >
+                {CardSide[index] ? (
+                  <Text numberOfLines={4} style={styles.text}>
+                    {cards[shuffledCards[index]]}
+                  </Text>
+                ) : (
+                  <Image source={questionMark} style={styles.questionMark} />
+                )}
+              </Pressable>
+            </View>
+          )}
+        />
+
+        <Text style={styles.display}>{displayCard}</Text>
+      </>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  card: {
+    width: 80,
+    height: 80,
+    marginBottom: 20,
+    marginHorizontal: "auto",
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    borderStyle: "solid",
+    borderColor: "black",
+    borderWidth: 1,
+    borderRadius: 20,
+    overflow: "hidden",
+    marginHorizontal: "auto",
+  },
+  text: {
+    padding: 12,
+    flex: 1,
+    overflow: "hidden",
+  },
+  questionMark: {
+    width: 80,
+    height: 80,
+  },
+  flatList: {
+    flexDirection: "row",
+    numColumns: 4,
+    flexWrap: "wrap",
+    justifyContent: "center",
+    width: "100%",
+    maxWidth: 400,
+    gap: 5,
+    marginTop: 20,
+  },
+  display: {
+    borderStyle: "solid",
+    borderColor: "black",
+    borderWidth: 1,
+    borderRadius: 20,
+    marginTop: 20,
+    fontSize: 16,
+    width: 300,
+    height: 200,
+    marginLeft: "auto",
+    marginRight: "auto",
+    marginBottom: 200,
+    padding: 10,
+  },
+  title: {
+    textAlign: "center",
+    marginTop: 50,
+    fontSize: 20,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: "#c4c4c4",
+    padding: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  Wrapper: {
+    width: "100%",
+    height: 200,
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 25,
+  },
+  actionButton: {
+    flex: 1,
+    backgroundColor: "white",
+    margin: 10,
+    padding: 10,
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: "grey",
+    width: 100,
+  },
+  buttonGroup: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    rowGap: 10,
+  },
+});
