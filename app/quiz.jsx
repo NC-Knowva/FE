@@ -11,7 +11,7 @@ import {
 import { useState, useEffect } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import quizData from "@/constants/quizQuestions.json";
-
+import { Stack } from "expo-router";
 import QuizResults from "@/components/quizResults";
 import QuizOptions from "@/components/quizOptions";
 
@@ -56,7 +56,7 @@ const Quiz = () => {
   };
 
   useEffect(() => {
-    let percentage = ((currQuestionIndex + 1) / Data.length) * 100;
+    let percentage = (currQuestionIndex / Data.length) * 100;
     setPercentageAnswered(percentage);
   }, [currQuestionIndex]);
 
@@ -97,6 +97,8 @@ const Quiz = () => {
   return (
     <View style={styles.container}>
       <SafeAreaView>
+        <Stack.Screen options={{ headerShown: false }} />
+        <View style={styles.topBuffer} />
         <View style={styles.countWrapper}>
           <Text style={{ fontWeight: "500" }}>
             {currQuestionIndex + 1}/{Data.length}
@@ -229,6 +231,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 20,
   },
+  topBuffer: { height: 50 },
 });
 
 export default Quiz;
