@@ -16,8 +16,6 @@ export function getUserByUsername(username) {
     return data.user;
   });
 }
-
-
 export function getCards() {
   return apiClient.get(`/cards`).then(({ data }) => {
     return data.cards;
