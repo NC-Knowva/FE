@@ -19,12 +19,11 @@ import {
   getGames,
 } from "@/endpoints";
 
-
 function GameScores({ scoreboard, game }) {
   const { score } = scoreboard;
   const scorePercentage =
-  (score.correct / (score.correct + score.incorrect)) * 100;
- 
+    (score.correct / (score.correct + score.incorrect)) * 100;
+
   if (!game || game.game_id !== scoreboard.game_id) return null;
 
   return (
@@ -33,9 +32,13 @@ function GameScores({ scoreboard, game }) {
         <Text style={styles.scoreText}>{scorePercentage}%</Text>
       </View>
       <View style={styles.activityInfoContainer}>
-        <Text style={styles.friendName}>{game.game_name || "Unknown Game"}</Text>
+        <Text style={styles.friendName}>
+          {game.game_name || "Unknown Game"}
+        </Text>
         <Text>{game.subject_name || "No subject"}</Text>
-        <Text style={styles.friendUsername}>{game.topic_name || "No Topic"}</Text>
+        <Text style={styles.friendUsername}>
+          {game.topic_name || "No Topic"}
+        </Text>
       </View>
     </View>
   );
@@ -80,7 +83,9 @@ function FriendGameActivity({ scoreboard, user }) {
         <TimeAgo created_at={created_at} />
         <Text>
           <Text style={styles.friendName}>{name} </Text>
-          <Text>scored {scorePercentage}% in a game</Text>
+          <Text>
+            scored {scorePercentage}% in {scoreboard.game_name}
+          </Text>
         </Text>
         <Text style={styles.friendUsername}>@{username}</Text>
       </View>
@@ -93,31 +98,36 @@ export default function HomeScreen() {
   const [friendUser, setFriendUser] = useState(null);
   const [friendActivities, setFriendActivities] = useState([]);
   const [friendMessages, setFriendMessages] = useState([]);
-  const [userScores, setUserScores] = useState([])
-  const [userGames, setUserGames] = useState([])
+  const [userScores, setUserScores] = useState([]);
+  const [userGames, setUserGames] = useState([]);
 
   useEffect(() => {
     async function fetchFriendData() {
       try {
         const scoreboard = await getScores();
-        const games = await getGames()
+        const games = await getGames();
 
         const gameActivities = await Promise.all(
-          scoreboard.map(async (scores) => {
+          scoreboard.map(async (score) => {
             try {
-              if (scores.username !== user.username) {
-                const friend = await getUserByUsername(scores.username);
-
+              if (score.username !== user.username) {
+                const friend = await getUserByUsername(score.username);
+                const game = games.find(
+                  (game) => game.game_id === score.game_id
+                );
 
                 return {
                   type: "game",
-                  created_at: scores.created_at,
+                  created_at: score.created_at,
                   user: friend,
-                  scores: scores,
+                  scores: {
+                    ...score,
+                    game_name: game?.game_name,
+                  },
                 };
               }
             } catch (error) {
-              console.log("Error fetching friend ", error);
+              console.log("Error fetching friend or gane", error);
               return null;
             }
           })
@@ -155,22 +165,24 @@ export default function HomeScreen() {
     }
 
     async function fetchUserScoreData() {
-        try {
-          const allScores = await getScores()
-          const allGames = await getGames ()
+      try {
+        const allScores = await getScores();
+        const allGames = await getGames();
 
-          const filteredScores = allScores.filter((score) => score.username === user.username)
+        const filteredScores = allScores.filter(
+          (score) => score.username === user.username
+        );
 
-          setUserScores(filteredScores)
-          setUserGames(allGames)
-        } catch (error) {
-          console.log("Error fetching user scores or games", erroe)
-        }
+        setUserScores(filteredScores);
+        setUserGames(allGames);
+      } catch (error) {
+        console.log("Error fetching user scores or games", erroe);
+      }
     }
 
     if (user?.username) {
       fetchFriendData();
-      fetchUserScoreData()
+      fetchUserScoreData();
     }
   }, [user]);
 
@@ -218,17 +230,17 @@ export default function HomeScreen() {
               <Pressable>
                 <Text style={styles.title}>Play again</Text>
                 {userScores.map((scoreObj, index) => {
-                const gameInfo = userGames.find(
-                  (game) => game.game_id === scoreObj.game_id
-                );
-                return (
-                  <GameScores
-                    key={index}
-                    scoreboard={scoreObj}
-                    game={gameInfo}
-                  />
-                );
-              })}
+                  const gameInfo = userGames.find(
+                    (game) => game.game_id === scoreObj.game_id
+                  );
+                  return (
+                    <GameScores
+                      key={index}
+                      scoreboard={scoreObj}
+                      game={gameInfo}
+                    />
+                  );
+                })}
               </Pressable>
             </Link>
             <Link style={styles.button} href="/revision" asChild>
@@ -300,7 +312,6 @@ export default function HomeScreen() {
                     <FriendGameActivity
                       scoreboard={activity.scores}
                       user={activity.user}
-
                     />
                   ) : activity.type === "message" ? (
                     <FriendActivity

@@ -28,7 +28,6 @@ export function getScores(){
 }
 export function getGames(){
   return apiClient.get(`/games`).then(({data}) => {
-    console.log(data.games, "data.games in endpoints")
     return data.games
   })
 }
