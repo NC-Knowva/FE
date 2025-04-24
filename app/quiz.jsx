@@ -1,5 +1,5 @@
 //import { SafeAreaView } from "react";
-import { SafeAreaView, StatusBar, StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { Platform, ScrollView, SafeAreaView, StatusBar, StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { useState, useEffect } from "react";
 
 import quizData from '@/constants/quizQuestions.json'
@@ -14,7 +14,9 @@ const randIndices = getRandomIndices (quizData.length, 10)
 const Data = getDataToDisplay (quizData, randIndices) //shuffleEntries(selectedQuizData)
 
 const Quiz = () => {
-    
+
+    const Container = Platform.OS === 'web' ? ScrollView : SafeAreaView
+       
     const [currQuestionIndex, setCurrQuestionIndex] = useState(0)
     const [score, setScore] = useState(0)
     const [percentageAnswered, setPercentageAnswered] = useState(0)
@@ -55,36 +57,38 @@ const Quiz = () => {
     }
      
     return(
-        <View style={styles.container}>
-                <SafeAreaView>
-                    <View style={styles.countWrapper}>
-                        <Text style={{fontWeight: '500'}}>{currQuestionIndex+1}/{Data.length}</Text>
-                    </View>
-
-                    <View style={styles.questionWrapper}>
-                        <View style={styles.progressWrapper}>
-                            <View style={[styles.progressBar, {width: `${percentageAnswered}%`}]}></View>
-                            <View style={styles.progressCount}>
-                                <Text style={styles.percentage}>{percentageAnswered}%</Text>
-                            </View>
+        <Container>
+            <View style={styles.container}>
+                    <SafeAreaView>
+                        <View style={styles.countWrapper}>
+                            <Text style={{fontWeight: '500'}}>{currQuestionIndex+1}/{Data.length}</Text>
                         </View>
-                        <Text style={{fontWeight: '500', textAlign: 'center'}}>
-                            {currQuestion}
-                        </Text>
-                    </View>
 
-                    <View style={styles.optionsWrapper}>
-                        <QuizOptions isSelectedAnswer={selectedAnswerA} isSelected={selectedAnswer.A} option={Data[currQuestionIndex].A}/>
-                        <QuizOptions isSelectedAnswer={selectedAnswerB} isSelected={selectedAnswer.B} option={Data[currQuestionIndex].B}/>
-                        <QuizOptions isSelectedAnswer={selectedAnswerC} isSelected={selectedAnswer.C} option={Data[currQuestionIndex].C}/>
-                        <QuizOptions isSelectedAnswer={selectedAnswerD} isSelected={selectedAnswer.D} option={Data[currQuestionIndex].D}/>
-                    </View>
+                        <View style={styles.questionWrapper}>
+                            <View style={styles.progressWrapper}>
+                                <View style={[styles.progressBar, {width: `${percentageAnswered}%`}]}></View>
+                                <View style={styles.progressCount}>
+                                    <Text style={styles.percentage}>{percentageAnswered}%</Text>
+                                </View>
+                            </View>
+                            <Text style={{fontWeight: '500', textAlign: 'center'}}>
+                                {currQuestion}
+                            </Text>
+                        </View>
 
-                    <TouchableOpacity onPress={handleNext} activeOpacity={0.7} style={styles.quizBtn}>
-                        <Text style={{color: '#fff', fontWeight: '500'}}> Next </Text>
-                    </TouchableOpacity>
-                </SafeAreaView>
-        </View>
+                        <View style={styles.optionsWrapper}>
+                            <QuizOptions isSelectedAnswer={selectedAnswerA} isSelected={selectedAnswer.A} option={Data[currQuestionIndex].A}/>
+                            <QuizOptions isSelectedAnswer={selectedAnswerB} isSelected={selectedAnswer.B} option={Data[currQuestionIndex].B}/>
+                            <QuizOptions isSelectedAnswer={selectedAnswerC} isSelected={selectedAnswer.C} option={Data[currQuestionIndex].C}/>
+                            <QuizOptions isSelectedAnswer={selectedAnswerD} isSelected={selectedAnswer.D} option={Data[currQuestionIndex].D}/>
+                        </View>
+
+                        <TouchableOpacity onPress={handleNext} activeOpacity={0.7} style={styles.quizBtn}>
+                            <Text style={{color: '#fff', fontWeight: '500'}}> Next </Text>
+                        </TouchableOpacity>
+                    </SafeAreaView>
+            </View>
+        </Container>
     )
 };
 

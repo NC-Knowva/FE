@@ -8,6 +8,7 @@ import {
   Image,
   Alert,
   ScrollView,
+  Platform
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Stack } from "expo-router";
@@ -32,10 +33,11 @@ const loginValidationSchema = yup.object().shape({
 });
 
 export default function SignUp() {
-  //const { token, user, saveToken, saveUser } = useAuth();
+
+  const Container = Platform.OS === 'web' ? ScrollView : SafeAreaView
   const navigation = useNavigation();
   return (
-    <>
+    <Container>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
         <Image source={loginLogo} style={styles.logo} />
@@ -164,7 +166,7 @@ export default function SignUp() {
           )}
         </Formik>
       </View>
-    </>
+    </Container>
   );
 }
 

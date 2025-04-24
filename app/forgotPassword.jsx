@@ -14,7 +14,6 @@ import loginLogo from "../assets/images/login.png";
 import Icon from "react-native-vector-icons/Ionicons";
 import { Formik } from "formik";
 import * as yup from "yup";
-//import { useAuth } from '../auth/authContext';
 
 const loginValidationSchema = yup.object().shape({
   email: yup
@@ -33,72 +32,15 @@ export default function ForgotPassword() {
   return (
     <View style={styles.container}>
       <Image source={loginLogo} style={styles.logo} />
-      <Text style={styles.title}>Sign Up</Text>
-      <Formik
-        validationSchema={loginValidationSchema}
-        initialValues={{ email: "", password: "" }}
-        onSubmit={(values) => {
-          // same shape as initial values
-          console.log(values);
-        }}
-      >
-        {({
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          values,
-          errors,
-          touched,
-          isValid,
-        }) => (
-          <>
-            <View style={styles.inputContainer}>
-              <Icon name="mail-outline" size={25} style={styles.icon} />
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                keyboardType="email-address"
-                onChangeText={handleChange("email")}
-                onBlur={handleBlur("email")}
-                value={values.email}
-              />
-            </View>
-            {errors.email && touched.email && (
-              <Text style={styles.errorText}>{errors.email}</Text>
-            )}
-            <View style={styles.inputContainer}>
-              {/* <Icon name="lock-closed-outline" size={25} style={styles.icon} /> */}
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-                secureTextEntry
-                onChangeText={handleChange("password")}
-                onBlur={handleBlur("password")}
-                value={values.password}
-              />
-            </View>
-            {errors.password && touched.password && (
-              <Text style={styles.errorText}>{errors.password}</Text>
-            )}
-            <TouchableOpacity onPress={() => navigation.navigate("Forget")}>
-              <Text style={styles.forgotPassword}>Forgot Password?</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleSubmit}
-              disabled={!isValid}
-            >
-              <Text style={styles.buttonText}>Sign Up</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("loginUser")}>
-              <Text style={styles.signUp}>
-                Already have an account Login{" "}
-                <Text style={styles.signUpLink}>Login</Text>
-              </Text>
-            </TouchableOpacity>
-          </>
-        )}
-      </Formik>
+      <Text style={styles.title}>Forgot Password</Text>
+      <Text style={styles.signUpLink}> Page under contruction</Text>
+      <Text style={styles.signUp}>Contact your Admin</Text>
+      <TouchableOpacity onPress={() => navigation.navigate("loginUser")}>
+        <Text style={styles.signUp}>
+           Already have an account Login{" "}
+           <Text style={styles.signUpLink}>Login</Text>
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
