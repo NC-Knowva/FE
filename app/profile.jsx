@@ -102,19 +102,19 @@ export default function App() {
               <View style={styles.row}>
                 <Link href="./profile/myCards" asChild>
                   <Pressable>
-                    <Text style={styles.elementStats}>10 Topics</Text>
+                    <Text style={styles.elementStats}>14 Topics</Text>
                   </Pressable>
                 </Link>
 
                 <Link href="../messaging?filter=friends" asChild>
                   <Pressable>
-                    <Text style={styles.elementStats}>200 Friends</Text>
+                    <Text style={styles.elementStats}>8 Friends</Text>
                   </Pressable>
                 </Link>
 
                 <Link href="../messaging?filter=groups" asChild>
                   <Pressable>
-                    <Text style={styles.elementStats}>2 Study Groups</Text>
+                    <Text style={styles.elementStats}>3 Study Groups</Text>
                   </Pressable>
                 </Link>
               </View>
