@@ -163,7 +163,6 @@ export default function HomeScreen() {
         console.log("Error fetching friend data:", error);
       }
     }
-
     async function fetchUserScoreData() {
       try {
         const allScores = await getScores();
@@ -172,7 +171,6 @@ export default function HomeScreen() {
         const filteredScores = allScores.filter(
           (score) => score.username === user.username
         );
-
         setUserScores(filteredScores);
         setUserGames(allGames);
       } catch (error) {
@@ -233,7 +231,9 @@ export default function HomeScreen() {
                     (game) => game.game_id === scoreObj.game_id
                   );
                   return (
+
                     <View key={`score-${scoreObj.game_id}-${index}`}  style={styles.friendContainer}>
+
                       <GameScores
                         key={index}
                         scoreboard={scoreObj}
@@ -242,12 +242,14 @@ export default function HomeScreen() {
                     </View>
                   );
                 })}
+
               
             <Link style={styles.button} href="/revision" asChild>
               <Pressable>
                 <Text>Play a new game</Text>
               </Pressable>
             </Link>
+
           </View>
 
           <View style={styles.exams}>
@@ -360,7 +362,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 15,
     backgroundColor: "lightgrey",
-    paddingVertical: 10,
+    paddingVertical: 40,
     width: "100%",
 
   },
@@ -376,7 +378,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     margin: 5, 
     flexShrink: 0,
-  },
+ },
   friendContainer: {
     alignSelf: "center",
     justifyContent: "center",
