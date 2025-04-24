@@ -7,85 +7,38 @@ import {
   Pressable,
   Image,
 } from "react-native";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { Redirect, Link } from "expo-router";
 import { UserContext } from "../../context/User";
 import TimeAgo from "@/components/TimeAgo";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import {
+  getUserByUsername,
+  getMessagesByUsername,
+  getScores,
+  getGames,
+} from "@/endpoints";
 
-const dummyFriendUser = {
-  username: "your_fav_ai",
-  name: "Conner",
-  avatar_img_url:
-    "https://www.gamebyte.com/wp-content/uploads/2019/07/Detroit_Become_Human_Connor_3.jpg",
-  education: "A-level",
-  settings: {},
-  calendar: {},
-  created_at: "2023-10-01T00:00:00.000Z",
-};
-
-const dummyFriendMessages = 
-  [{
-    sender_username:"your_fav_ai",
-    receiver_username:"iheartsocio",
-    body:"shall we revise later tonight?",
-    created_at:"2023-10-04T00:00:00.000Z"
-    
-},
-{
-  sender_username:"your_fav_ai",
-  receiver_username:"iheartsocio",
-  body:"shall we revise later tonight?",
-  created_at:"2024-10-04T00:00:00.000Z"
-  
-},
-]
-
-const dummyScores = {
-  username: "iheartsocio",
-  game_type: "quiz",
-  game_name: "Brain Sum Blitz",
-  topic: "Normal Distribution and Missing Parameters",
-  subject: "Maths",
-  score: { correct: 9, incorrect: 1, time: 95 },
-};
-
-const dummyFriendScores = {
-  username: "your_fav_ai",
-  game_type: "quiz",
-  game_name: "Brain Sum Blitz",
-  topic: "Normal Distribution and Missing Parameters",
-  subject: "Maths",
-  score: { correct: 8, incorrect: 2, time: 125 },
-  created_at: "2025-04-04T00:00:00.000Z",
-};
-
-const friendActivities = [
-  {type: "game",
-  created_at: dummyFriendScores.created_at,
-  user: dummyFriendUser,
-  scores: dummyFriendScores
-  },
-  ...dummyFriendMessages.map((msg) => ({
-    type: "message",
-    created_at: msg.created_at,
-    user: dummyFriendUser,
-  }))
-]
-
-function GameScores({ scoreboard }) {
-  const { score, game_name, topic, subject } = scoreboard;
+function GameScores({ scoreboard, game }) {
+  const { score } = scoreboard;
   const scorePercentage =
     (score.correct / (score.correct + score.incorrect)) * 100;
+
+  if (!game || game.game_id !== scoreboard.game_id) return null;
+
   return (
     <View style={styles.row}>
       <View style={styles.scoreContainer}>
         <Text style={styles.scoreText}>{scorePercentage}%</Text>
       </View>
       <View style={styles.activityInfoContainer}>
-        <Text style={styles.friendName}>{game_name}</Text>
-        <Text>{subject}</Text>
-        <Text style={styles.friendUsername}>{topic}</Text>
+        <Text style={styles.friendName}>
+          {game.game_name }
+        </Text>
+        <Text>{game.subject_name }</Text>
+        <Text style={styles.friendUsername}>
+          {game.topic_name }
+        </Text>
       </View>
     </View>
   );
@@ -114,7 +67,7 @@ function FriendActivity({ user, created_at }) {
 }
 
 function FriendGameActivity({ scoreboard, user }) {
-  const { score, game_name, username, created_at } = scoreboard;
+  const { score, username, created_at } = scoreboard;
   const { avatar_img_url, name } = user;
   const scorePercentage =
     (score.correct / (score.correct + score.incorrect)) * 100;
@@ -131,7 +84,7 @@ function FriendGameActivity({ scoreboard, user }) {
         <Text>
           <Text style={styles.friendName}>{name} </Text>
           <Text>
-            scored {scorePercentage}% in {game_name}
+            scored {scorePercentage}% in {scoreboard.game_name}
           </Text>
         </Text>
         <Text style={styles.friendUsername}>@{username}</Text>
@@ -142,25 +95,112 @@ function FriendGameActivity({ scoreboard, user }) {
 
 export default function HomeScreen() {
   const { user, setUser } = useContext(UserContext);
+  const [friendUser, setFriendUser] = useState(null);
+  const [friendActivities, setFriendActivities] = useState([]);
+  const [friendMessages, setFriendMessages] = useState([]);
+  const [userScores, setUserScores] = useState([]);
+  const [userGames, setUserGames] = useState([]);
 
-  const containerBg = useThemeColor({}, "container");
-  const scoreBg = useThemeColor({}, "scoreContainer");
-  const scoreBorder = useThemeColor({}, "scoreBorder");
-  const friendBg = useThemeColor({}, "friendContainer");
-  const textColor = useThemeColor({}, "text");
-  const usernameColor = useThemeColor({}, "username");
-  const buttonBg = useThemeColor({}, "button");
-  const buttonBorder = useThemeColor({}, "buttonBorder");
-  const examButtonBg = useThemeColor({}, "examButton");
-  const examContainerBg = useThemeColor({}, "examContainer");
-  const dateColor = useThemeColor({}, "date");
+  useEffect(() => {
+    async function fetchFriendData() {
+      try {
+        const scoreboard = await getScores();
+        const games = await getGames();
 
-  console.log(user);
+        const gameActivities = await Promise.all(
+          scoreboard.map(async (score) => {
+            try {
+              if (score.username !== user.username) {
+                const friend = await getUserByUsername(score.username);
+                const game = games.find(
+                  (game) => game.game_id === score.game_id
+                );
+
+                return {
+                  type: "game",
+                  created_at: score.created_at,
+                  user: friend,
+                  scores: {
+                    ...score,
+                    game_name: game?.game_name,
+                  },
+                };
+              }
+            } catch (error) {
+              console.log("Error fetching friend or gane", error);
+              return null;
+            }
+          })
+        );
+
+        const messages = await getMessagesByUsername(user.username);
+
+        const messageActivities = await Promise.all(
+          messages.map(async (msg) => {
+            try {
+              const sender = await getUserByUsername(msg.sender_username);
+              if (msg.sender_username !== user.username)
+                return {
+                  type: "message",
+                  created_at: msg.created_at,
+                  user: sender,
+                };
+            } catch (error) {
+              console.log("Error fetching sender:", error);
+              return null;
+            }
+          })
+        );
+
+        const activities = [
+          ...gameActivities.filter(Boolean),
+          ...messageActivities.filter(Boolean),
+        ];
+
+        setFriendMessages(messages);
+        setFriendActivities(activities);
+      } catch (error) {
+        console.log("Error fetching friend data:", error);
+      }
+    }
+    async function fetchUserScoreData() {
+      try {
+        const allScores = await getScores();
+        const allGames = await getGames();
+
+        const filteredScores = allScores.filter(
+          (score) => score.username === user.username
+        );
+        setUserScores(filteredScores);
+        setUserGames(allGames);
+      } catch (error) {
+        console.log("Error fetching user scores or games", erroe);
+      }
+    }
+
+    if (user?.username) {
+      fetchFriendData();
+      fetchUserScoreData();
+    }
+  }, [user]);
+
+  // const containerBg = useThemeColor({}, "container");
+  // const scoreBg = useThemeColor({}, "scoreContainer");
+  // const scoreBorder = useThemeColor({}, "scoreBorder");
+  // const friendBg = useThemeColor({}, "friendContainer");
+  // const textColor = useThemeColor({}, "text");
+  // const usernameColor = useThemeColor({}, "username");
+  // const buttonBg = useThemeColor({}, "button");
+  // const buttonBorder = useThemeColor({}, "buttonBorder");
+  // const examButtonBg = useThemeColor({}, "examButton");
+  // const examContainerBg = useThemeColor({}, "examContainer");
+  // const dateColor = useThemeColor({}, "date");
+
   if (user) {
     return (
       <ScrollView>
         <SafeAreaView>
-          <View style={styles.container}>
+          <View style={styles.headerContainer}>
             <Text style={styles.title}>Daily Revision Progress</Text>
             <View style={styles.row}>
               <View style={styles.imageContainer}>
@@ -172,6 +212,7 @@ export default function HomeScreen() {
 
               <View style={styles.activityInfoContainer}>
                 <Text style={styles.activityInfo}>Activity Information:</Text>
+                {/* scoreboard or not MVP and combined totals for each subject */}
                 {[
                   { key: "History 15%" },
                   { key: "French 87%" },
@@ -183,21 +224,37 @@ export default function HomeScreen() {
             </View>
           </View>
           <View style={styles.container}>
-            <Link href="/revision" asChild>
-              <Pressable>
+            
                 <Text style={styles.title}>Play again</Text>
-                <GameScores scoreboard={dummyScores} />
+                {userScores.map((scoreObj, index) => {
+                  const gameInfo = userGames.find(
+                    (game) => game.game_id === scoreObj.game_id
+                  );
+                  return (
+
+                    <View key={`score-${scoreObj.game_id}-${index}`}  style={styles.friendContainer}>
+
+                      <GameScores
+                        key={index}
+                        scoreboard={scoreObj}
+                        game={gameInfo}
+                      />
+                    </View>
+                  );
+                })}
+
+              
+            <Link style={styles.button} href="/revision" asChild>
+              <Pressable>
+                <Text>Play a new game</Text>
               </Pressable>
             </Link>
-            <Link style={styles.button} href="/revision" asChild>
-            <Pressable>
-              <Text>Play a new game</Text>
-            </Pressable>
-          </Link>
+
           </View>
 
           <View style={styles.exams}>
             <Link style={styles.examContainer} href="/calendar" asChild>
+              {/* Not MVP - calendar data */}
               <Pressable>
                 <View style={styles.row}>
                   <View style={styles.examButton}>
@@ -246,24 +303,27 @@ export default function HomeScreen() {
               </Pressable>
             </Link>
           </View>
-          
+
           <View style={styles.friendActivityContainer}>
             <Text style={styles.title}>Friend Activity</Text>
-            {[...friendActivities].sort((a,b) => new Date(b.created_at) - new Date(a.created_at))
-            .map((activity, index) => (
-              <View key={index} style={styles.friendContainer}>
-                {activity.type === "game" ? (
-                  <FriendGameActivity scoreboard={activity.scores} user={activity.user}/>
-                ) : activity.type === "message" ? (
-                  <FriendActivity user={activity.user} created_at={activity.created_at}/>
-                ) : null
-              }
-              </View>
-            ))
-            }
+            {[...friendActivities]
+              .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+              .map((activity, index) => (
+                <View key={index} style={styles.friendContainer}>
+                  {activity.type === "game" ? (
+                    <FriendGameActivity
+                      scoreboard={activity.scores}
+                      user={activity.user}
+                    />
+                  ) : activity.type === "message" ? (
+                    <FriendActivity
+                      user={activity.user}
+                      created_at={activity.created_at}
+                    />
+                  ) : null}
+                </View>
+              ))}
           </View>
-
-          
         </SafeAreaView>
       </ScrollView>
     );
@@ -288,14 +348,23 @@ const styles = StyleSheet.create({
     left: 0,
     position: "absolute",
   },
+  headerContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "lightgrey",
+    width: "100%",
+    paddingVertical: 10,
+  },
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 10,
+    marginTop: 15,
     backgroundColor: "lightgrey",
-    paddingVertical: 10,
+    paddingVertical: 40,
     width: "100%",
+
   },
   scoreContainer: {
     width: 80,
@@ -307,7 +376,9 @@ const styles = StyleSheet.create({
     borderColor: "lightblue",
     borderWidth: 4,
     marginLeft: 20,
-  },
+    margin: 5, 
+    flexShrink: 0,
+ },
   friendContainer: {
     alignSelf: "center",
     justifyContent: "center",
@@ -374,6 +445,7 @@ const styles = StyleSheet.create({
   activityInfoContainer: {
     flex: 1,
     paddingHorizontal: 10,
+    minWidth: 0,
   },
   button: {
     backgroundColor: "white",
