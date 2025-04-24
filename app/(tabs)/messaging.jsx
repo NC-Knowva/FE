@@ -11,16 +11,7 @@ import {
 import { Link, Stack, router, useLocalSearchParams } from "expo-router";
 import Entypo from "@expo/vector-icons/Entypo";
 import TimeAgo from "@/components/TimeAgo";
-import { getUsers } from "../../endpoints";
-
-const dummyUser = {
-  username: "iheartsocio",
-  name: "sara",
-  avatar_img_url:
-    "https://i.pinimg.com/236x/a9/24/01/a924011ac7bbcf9159a7544abb1def06.jpg",
-  message: "bvcxb xcbxkjbxcvj ibpxvc gfsdddddd ddddddddd",
-  created_at: "2023-10-04T00:00:00.000Z",
-};
+import { getUsers, getStudyGroups } from "../../endpoints";
 
 function ChatBox({ user }) {
   return (
@@ -49,14 +40,47 @@ export default function Messaging() {
   const { filter } = useLocalSearchParams();
   const [filterChats, onFilterChats] = useState(filter);
   const [users, setUsers] = useState([]);
+  const [studyGroups, setStudyGroups] = useState([]);
+
+  const[messages, setMessages] = useState([])
 
   useEffect(() => {
-    getUsers()
-      .then((users) => {
-        setUsers(users);
-      })
-      .catch((error) => {});
-  }, []);
+    async function fetchData() {
+      try {
+        const [allUsers, allStudyGroups] = await Promise.all([
+          getUsers(),
+          getStudyGroups(),
+        ]);
+        const usersWithType = allUsers.map((user) => ({
+          ...user,
+          type: "friend",
+        }));
+        const groupsWithType = allStudyGroups.map((group) => ({
+          ...group,
+          type: "study_group",
+          name: group.study_group,
+          username: group.group_id,
+        }));
+        let combined = [...usersWithType, ...groupsWithType];
+
+        switch (filter) {
+          case "friends":
+            combined = combined.filter((item) => item.type === "friend");
+            break;
+          case "study_groups":
+            combined = combined.filter((item) => item.type == "study_group");
+            break;
+          default:
+            break;
+        }
+        combined.sort((a,b) => new Date (b.created_at) - new Date(a.created_at))
+       setMessages(combined)
+      } catch (error) {
+        console.log("There was an error fetching data", error);
+      }
+    }
+    fetchData();
+  }, [filter]);
 
   return (
     <ScrollView>
@@ -75,7 +99,7 @@ export default function Messaging() {
               router.setParams({ filter: "friends" });
             }}
           >
-            <Text style={styles.barElement}>Friend</Text>
+            <Text style={styles.barElement}>Friends</Text>
           </Pressable>
           <Pressable
             onPress={() => {
@@ -106,8 +130,8 @@ export default function Messaging() {
         </View>
 
         <View style={styles.friendMessages}>
-          {users.map((user) => {
-            return <ChatBox user={user} />;
+          {messages.map((item) => {
+            return <ChatBox key={item.username || item.group_id} user={item} />;
           })}
         </View>
       </SafeAreaView>
