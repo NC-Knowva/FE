@@ -144,7 +144,7 @@ const Quiz = () => {
         </TouchableOpacity>
       </SafeAreaView>
     </View>
-  </Container
+  </Container>
   );
 };
 
