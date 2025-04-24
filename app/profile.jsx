@@ -9,7 +9,7 @@ import {
 import { Link, Stack, Redirect } from "expo-router";
 import { UserContext } from "../context/User";
 import { React, useContext, useState, useEffect } from "react";
-import { getCards, getStudyGroups } from "@/endpoints";
+import { getCards, getStudyGroups, getSubjects } from "@/endpoints";
 
 function CardBox({ card }) {
   const { name, education_id, description } = card;
@@ -28,7 +28,7 @@ function CardBox({ card }) {
   );
 }
 
-function StudyGroupBox({ studyGroup }) {
+function StudyGroupBox({ studyGroup, subject }) {
   const { study_group, avatar_img_url } = studyGroup;
   return (
     <View style={styles.sectionElement}>
@@ -41,6 +41,14 @@ function StudyGroupBox({ studyGroup }) {
         </View>
         <View style={styles.infoContainer}>
           <Text style={styles.studyName}>{study_group}</Text>
+          <Text>
+            <Text style={styles.label}>Subject: </Text>
+            <Text style={{ color: "dimgrey" }}>{subject.subject_name}</Text>
+          </Text>
+          <Text>
+            <Text style={styles.label}>Education Level: </Text>
+            <Text style={{ color: "dimgrey" }}>{subject.education_id}</Text>
+          </Text>
         </View>
       </View>
     </View>
@@ -51,16 +59,19 @@ export default function App() {
   const { user, setUser } = useContext(UserContext);
   const [userCards, setUserCards] = useState([]);
   const [studyGroups, setStudyGroups] = useState([]);
+  const [subjects, setSubjects] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const [allCards, allStudyGroups] = await Promise.all([
+        const [allCards, allStudyGroups, allSubjects] = await Promise.all([
           getCards(),
           getStudyGroups(),
+          getSubjects(),
         ]);
         setUserCards(allCards);
         setStudyGroups(allStudyGroups);
+        setSubjects(allSubjects);
       } catch (error) {
         console.log("There was an error fetching data", error);
       }
@@ -142,10 +153,14 @@ export default function App() {
             <Text style={styles.sectionTitle}>Study Groups:</Text>
             <View style={styles.sectionGrid}>
               {studyGroups.map((studyGroup) => {
+                const subject = subjects.find(
+                  (subject) => subject.subject_id === studyGroup.subject_id
+                );
                 return (
                   <StudyGroupBox
                     key={studyGroup.group_id}
                     studyGroup={studyGroup}
+                    subject={subject}
                   />
                 );
               })}
@@ -178,8 +193,6 @@ const styles = StyleSheet.create({
   imageContainer: {
     flex: 1,
     backgroundColor: "white",
-    // borderColor: "black",
-    // borderWidth: 3,
     borderRadius: 30,
     margin: 10,
     alignItems: "center",
@@ -203,9 +216,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  usernameRow:{
+  usernameRow: {
     flexDirection: "row",
-    marginLeft: 10
+    marginLeft: 10,
   },
   buttonRow: {
     flexDirection: "row",
@@ -271,7 +284,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   sectionGrid: {
-    justifyContent: "center", // or "space-around"
+    justifyContent: "center",
     padding: 5,
     gap: 10,
   },
@@ -300,6 +313,6 @@ const styles = StyleSheet.create({
   },
   label: {
     fontWeight: "bold",
-    color: "dimgrey"
+    color: "dimgrey",
   },
 });
