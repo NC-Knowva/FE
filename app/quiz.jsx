@@ -56,8 +56,6 @@ const Quiz = () => {
     let percentage = (currQuestionIndex / Data.length) * 100;
     setPercentageAnswered(percentage);
   }, [currQuestionIndex]);
-
-  let currQuestion = Data[currQuestionIndex].question;
    
     const handleNext = () => {
         let correctAnswer = Data[currQuestionIndex].answer
