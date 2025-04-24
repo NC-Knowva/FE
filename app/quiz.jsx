@@ -1,13 +1,6 @@
 //import { SafeAreaView } from "react";
+import { Platform, ScrollView, SafeAreaView, StatusBar, StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import React from "react";
-import {
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-} from "react-native";
 import { useState, useEffect } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import quizData from "@/constants/quizQuestions.json";
@@ -24,6 +17,10 @@ let randIndices = getRandomIndices(quizData.length, 10);
 let Data = getDataToDisplay(quizData, randIndices);
 
 const Quiz = () => {
+
+  const Container = Platform.OS === 'web' ? ScrollView : SafeAreaView
+    
+  let currQuestion = Data[currQuestionIndex].question
   const [currQuestionIndex, setCurrQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [percentageAnswered, setPercentageAnswered] = useState(0);
@@ -61,24 +58,21 @@ const Quiz = () => {
   }, [currQuestionIndex]);
 
   let currQuestion = Data[currQuestionIndex].question;
+   
+    const handleNext = () => {
+        let correctAnswer = Data[currQuestionIndex].answer
 
-  const handleNext = () => {
-    let correctAnswer = Data[currQuestionIndex].answer;
-
-    if (
-      Object.keys(selectedAnswer).find(
-        (key) => selectedAnswer[key] === true
-      ) === correctAnswer
-    )
-      setScore((prev) => prev + 1);
-
-    if (currQuestionIndex < Data.length - 1) {
-      setCurrQuestionIndex((prev) => prev + 1);
-    } else {
-      setShowResult(true);
+        if (Object.keys(selectedAnswer).find(key => selectedAnswer[key] === true)  === correctAnswer)
+            setScore((prev) => prev + 1)
+        
+        if (currQuestionIndex < Data.length - 1){
+            setCurrQuestionIndex((prev) => ( prev + 1))
+        }
+        else {
+            setShowResult(true)
+        }
+        SetSelectedAnswer( {A: false, B: false, C: false, D: false} )
     }
-    SetSelectedAnswer({ A: false, B: false, C: false, D: false });
-  };
 
   if (showResult) {
     return (
@@ -95,6 +89,7 @@ const Quiz = () => {
   }
 
   return (
+  <Container>
     <View style={styles.container}>
       <SafeAreaView>
         <Stack.Screen options={{ headerShown: false }} />
@@ -151,6 +146,7 @@ const Quiz = () => {
         </TouchableOpacity>
       </SafeAreaView>
     </View>
+  </Container
   );
 };
 
