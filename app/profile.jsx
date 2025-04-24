@@ -9,9 +9,64 @@ import {
 import { Link, Stack, Redirect } from "expo-router";
 import { UserContext } from "../context/User";
 import { React, useContext, useState, useEffect } from "react";
+import { getCards, getStudyGroups } from "@/endpoints";
+
+function CardBox({ card }) {
+  const { name, education_id, description } = card;
+  return (
+    <View style={styles.sectionElement}>
+      <Text style={styles.studyName}>{name}</Text>
+      <Text>
+        <Text style={styles.label}>Eduction level: </Text>
+        <Text style={{ color: "dimgrey" }}>{education_id}</Text>
+      </Text>
+      <Text>
+        <Text style={styles.label}>Description: </Text>
+        <Text style={{ color: "dimgrey" }}>{description}</Text>
+      </Text>
+    </View>
+  );
+}
+
+function StudyGroupBox({ studyGroup }) {
+  const { study_group, avatar_img_url } = studyGroup;
+  return (
+    <View style={styles.sectionElement}>
+      <View style={styles.row}>
+        <View style={styles.chatImageContainer}>
+          <Image
+            style={styles.chatCardImage}
+            source={{ uri: avatar_img_url }}
+          />
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.studyName}>{study_group}</Text>
+        </View>
+      </View>
+    </View>
+  );
+}
 
 export default function App() {
   const { user, setUser } = useContext(UserContext);
+  const [userCards, setUserCards] = useState([]);
+  const [studyGroups, setStudyGroups] = useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [allCards, allStudyGroups] = await Promise.all([
+          getCards(),
+          getStudyGroups(),
+        ]);
+        setUserCards(allCards);
+        setStudyGroups(allStudyGroups);
+      } catch (error) {
+        console.log("There was an error fetching data", error);
+      }
+    }
+    fetchData();
+  }, []);
 
   if (user) {
     return (
@@ -28,7 +83,9 @@ export default function App() {
             <View style={styles.userContainer}>
               <View style={styles.row}>
                 <View style={styles.username}>
-                  <Text style={styles.usernameText}>Welcome back {user.name}! </Text>
+                  <Text style={styles.usernameText}>
+                    Welcome back {user.name}!{" "}
+                  </Text>
                 </View>
               </View>
               <View style={styles.row}>
@@ -53,7 +110,7 @@ export default function App() {
             </View>
           </View>
 
-          <View style={styles.row}>
+          <View style={styles.usernameRow}>
             <Text style={styles.elementUsername}>@{user.username}</Text>
           </View>
 
@@ -84,19 +141,23 @@ export default function App() {
           <View style={styles.groupContainer}>
             <Text style={styles.sectionTitle}>Study Groups:</Text>
             <View style={styles.sectionGrid}>
-              <Text style={styles.sectionElement}>Subject</Text>
-              <Text style={styles.sectionElement}>Subject</Text>
-              <Text style={styles.sectionElement}>Subject</Text>
+              {studyGroups.map((studyGroup) => {
+                return (
+                  <StudyGroupBox
+                    key={studyGroup.group_id}
+                    studyGroup={studyGroup}
+                  />
+                );
+              })}
             </View>
           </View>
 
           <View style={styles.groupContainer}>
             <Text style={styles.sectionTitle}>My Cards:</Text>
             <View style={styles.sectionGrid}>
-              <Text style={styles.sectionElement}>Subject</Text>
-              <Text style={styles.sectionElement}>Subject</Text>
-              <Text style={styles.sectionElement}>Subject</Text>
-              <Text style={styles.sectionElement}>Subject</Text>
+              {userCards.map((userCard) => {
+                return <CardBox key={userCard.pack_id} card={userCard} />;
+              })}
             </View>
           </View>
         </View>
@@ -132,14 +193,19 @@ const styles = StyleSheet.create({
     justifyContent: "top",
   },
   groupContainer: {
-    flex: 1,
-    alignItems: "top",
-    justifyContent: "top",
-    // backgroundColor: "linen"
+    marginBottom: 20,
+    paddingHorizontal: 10,
   },
   row: {
     flexDirection: "row",
+    flexWrap: "wrap",
     height: "auto",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  usernameRow:{
+    flexDirection: "row",
+    marginLeft: 10
   },
   buttonRow: {
     flexDirection: "row",
@@ -147,26 +213,23 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   username: {
-    borderColor: "#fff",
-    borderWidth: 1,
     flexGrow: 3,
     height: 100,
     justifyContent: "center",
     alignItems: "center",
   },
   usernameText: {
-    flex: "wrap",
     textAlign: "center",
-    height: "auto",
-    padding: 10,
     fontWeight: "bold",
-    fontSize: 30
+    fontSize: 30,
+    padding: 10,
+    flexShrink: 1,
+    maxWidth: "80%",
   },
   image: {
     width: "100%",
     height: 200,
     resizeMode: "contain",
-    
   },
   button: {
     backgroundColor: "white",
@@ -194,14 +257,13 @@ const styles = StyleSheet.create({
   },
   sectionElement: {
     backgroundColor: "white",
-    alignItems: "center",
+    alignItems: "flex-start",
     margin: 5,
     height: "auto",
     padding: 10,
-    fontSize: 15,
-    borderWidth: 1,
+    borderWidth: 2,
     borderRadius: 5,
-    borderColor: "grey",
+    borderColor: "lightblue",
   },
   sectionTitle: {
     padding: 10,
@@ -209,12 +271,35 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   sectionGrid: {
+    justifyContent: "center", // or "space-around"
     padding: 5,
+    gap: 10,
   },
   elementUsername: {
     color: "dimgrey",
     fontSize: 15,
     marginLeft: 10,
-    fontWeight: "bold"
-  }
+    fontWeight: "bold",
+  },
+  chatCardImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+  },
+  chatImageContainer: {
+    marginRight: 10,
+  },
+  infoContainer: {
+    flex: 1,
+    paddingHorizontal: 10,
+    minWidth: 0,
+  },
+  studyName: {
+    fontSize: 15,
+    fontWeight: "bold",
+  },
+  label: {
+    fontWeight: "bold",
+    color: "dimgrey"
+  },
 });
