@@ -1,50 +1,76 @@
-# Welcome to your Expo app 👋
+# 🧠 Knowva Backend
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+The backend API for **Knowva**, a collaborative study app that allows users to join group chats, play quizzes, and track scores with friends in real-time.
 
-## Get started
+Built using **Node.js**, **Express**, and **PostgreSQL**, this backend powers features like authentication, quiz data handling, score tracking, and user interactions.
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## 🚀 Features
 
-2. Start the app
+- 🧩 RESTful API for users, quizzes, scores, and study groups
+- 💬 Real-time group chat powered by **Socket.io**
+- 🧪 Tested with **Jest** and **Supertest**
+- 🛡️ Secure routing and error handling
+- 🌐 PostgreSQL database integration with seed & setup scripts
 
-   ```bash
-    npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## 🛠️ Tech Stack
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Node.js
+- Express
+- PostgreSQL
+- Socket.io
+- Jest + Supertest
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## 📂 Project Structure
 
-When you're ready, run:
+/db -> Database setup, seed files, connection
+/controllers -> Route logic (e.g., users, quizzes, scores)
+/models -> SQL queries
+/routes -> Express routers
+/tests -> Backend tests
+/app.js -> Main server app
+
+---
+
+## ⚙️ Setup
+
+### 1. Clone the repo
 
 ```bash
-npm run reset-project
+git clone https://github.com/NC-Knowva/BE.git
+cd BE
+```
+### 2. Install dependencies
+```
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 3. Create and seed database
+```
+psql < db/setup.sql
+psql < db/seed.sql
+```
+### 4. Start the server
+```
+npm run dev
+```
+### 5. Testing
+```
+npm test
+```
+- Uses Jest for unit testing
 
-## Learn more
+- Uses Supertest for integration testing
 
-To learn more about developing your project with Expo, look at the following resources:
+## 🔧 Future Improvements
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- Add authentication with JWT
 
-## Join the community
+- Expand quiz types (e.g. flashcards)
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- More robust error handling and validation
